@@ -1,0 +1,16 @@
+# Database backups (regenerated from migrations via supabase db dump)
+backups/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# IDE
+.idea/
+*.iml
+.vscode/settings.json
+
+# OS
+.DS_Store
+Thumbs.db
