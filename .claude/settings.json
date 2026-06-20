@@ -32,7 +32,9 @@
       "PowerShell(docker run --rm --entrypoint /bin/sh public.ecr.aws/supabase/realtime:v2.107.5 -c \"ls -la /usr/bin/tini 2>/dev/null; file /usr/bin/tini 2>/dev/null; /usr/bin/tini --version 2>&1\")",
       "PowerShell(docker rmi public.ecr.aws/supabase/realtime:v2.107.5 -f 2>$null)",
       "PowerShell(docker pull public.ecr.aws/supabase/realtime:v2.107.5 2>&1)",
-      "PowerShell(docker run --rm --entrypoint /bin/sh public.ecr.aws/supabase/realtime:v2.107.5 -c \"/tini --version 2>&1; echo test\")"
+      "PowerShell(docker run --rm --entrypoint /bin/sh public.ecr.aws/supabase/realtime:v2.107.5 -c \"/tini --version 2>&1; echo test\")",
+      "Bash(supabase db *)",
+      "Bash(docker exec *)"
     ]
   }
 }

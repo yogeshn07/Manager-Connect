@@ -76,12 +76,12 @@ Access model: every active member can read any profile (members need to see each
 
 ### invitations
 
-Access model: only admins can create and manage invitations. Members can view only the invitation that used their own profile as `used_by`.
+Access model: only admins can create and manage invitations. Members can view only the invitation that references their own profile as `accepted_by`.
 
 | Policy Name | Operation | Role | Condition | Notes |
 |---|---|---|---|---|
 | `invitations_select_admin` | SELECT | Admin | [active-user-guard] AND `is_admin()` | Admin sees all invitations |
-| `invitations_select_own` | SELECT | Member | [active-user-guard] AND `used_by = auth.uid()` | Member sees only the invitation they redeemed |
+| `invitations_select_own` | SELECT | Member | [active-user-guard] AND `accepted_by = auth.uid()` | Member sees only the invitation they accepted |
 | `invitations_insert_admin` | INSERT | Admin | [active-user-guard] AND `is_admin()` | Only admins can create invite tokens |
 | `invitations_update_admin` | UPDATE | Admin | [active-user-guard] AND `is_admin()` | Admins can mark invites as used or cancel them |
 | `invitations_delete_blocked` | DELETE | None | `false` | Invitations are not hard-deleted |
@@ -160,12 +160,12 @@ Access model: mentions are metadata extracted from post content. Any member can 
 
 ### activities
 
-Access model: all members can view all activities. Only admins can create or modify activities. No hard delete (activities are cancelled via status field).
+Access model: all members can view and create activities (FR-04.1). Only admins can modify activities (status changes, cancellation). No hard delete.
 
 | Policy Name | Operation | Role | Condition | Notes |
 |---|---|---|---|---|
 | `activities_select_authenticated` | SELECT | Any | [active-user-guard] | All members see all activities |
-| `activities_insert_admin` | INSERT | Admin | [active-user-guard] AND `is_admin()` | Admin-only creation |
+| `activities_insert_authenticated` | INSERT | Any | [active-user-guard] AND `created_by = auth.uid()` | Any active member can create events (FR-04.1) |
 | `activities_update_admin` | UPDATE | Admin | [active-user-guard] AND `is_admin()` | Admin-only modification (includes status changes) |
 | `activities_delete_blocked` | DELETE | None | `false` | Cancellation via `status = 'cancelled'` UPDATE |
 

@@ -1033,12 +1033,22 @@ A single reusable trigger function drives `updated_at` management across all mut
 | `community_health_scores` | No updates needed; rows are upserted by primary key |
 | `admin_audit_log` | Immutable by design; no UPDATE permitted by any role |
 
+### is_active_user()
+
+A helper function used as the base guard in every RLS policy on every table. Created to prevent infinite RLS recursion — without `SECURITY DEFINER`, an inline `EXISTS (SELECT FROM profiles WHERE is_active)` check inside a `profiles` SELECT policy would trigger the same policy recursively.
+
+- **Returns:** `boolean`
+- **Logic:** Returns `true` if `auth.uid()` resolves to a `profiles` row where `is_active = true`. Returns `false` if no profile exists or the profile is deactivated.
+- **Security:** Defined with `SECURITY DEFINER` so it bypasses RLS on the `profiles` table during policy evaluation.
+- **Used in:** Every RLS policy on every table, as the `[active-user-guard]` condition.
+
 ### is_admin()
 
 A helper function used across RLS policies to determine whether the calling user holds an active admin role.
 
 - **Returns:** `boolean`
 - **Logic:** Returns `true` if `auth.uid()` resolves to a `profiles` row where `app_role = 'admin'` AND `is_active = true`
+- **Security:** Defined with `SECURITY DEFINER` so it bypasses RLS on the `profiles` table during policy evaluation.
 - **Used in:** RLS policies across all tables requiring admin-elevated read or write access
 
 ---
