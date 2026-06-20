@@ -251,12 +251,12 @@ Access model: all members can view attendance records. Only admins can create or
 
 ### challenges
 
-Access model: all members can view challenges. Only admins can create or update them.
+Access model: all members can view and create challenges (FR-05.1, FR-05.2). Only admins can update them (status changes, closure). No hard delete.
 
 | Policy Name | Operation | Role | Condition | Notes |
 |---|---|---|---|---|
 | `challenges_select_authenticated` | SELECT | Any | [active-user-guard] | All members see all challenges |
-| `challenges_insert_admin` | INSERT | Admin | [active-user-guard] AND `is_admin()` | Admin-only challenge creation |
+| `challenges_insert_authenticated` | INSERT | Any | [active-user-guard] AND `created_by = auth.uid()` | Any active member can create challenges (FR-05.1, FR-05.2) |
 | `challenges_update_admin` | UPDATE | Admin | [active-user-guard] AND `is_admin()` | Admin can update challenge details and status |
 | `challenges_delete_blocked` | DELETE | None | `false` | Challenges end via `status` field, not deletion |
 
@@ -277,12 +277,12 @@ Access model: all members can see who has joined challenges. Members can join (I
 
 ### progress_logs
 
-Access model: members can only see and manage their own logs. Admins can see all logs. No hard delete.
+Access model: all members can read all logs (FR-05.5: leaderboard requires all-member visibility). Members can insert and update their own logs. Admins can also see all. No hard delete.
 
 | Policy Name | Operation | Role | Condition | Notes |
 |---|---|---|---|---|
-| `progress_logs_select_own` | SELECT | Member | [active-user-guard] AND `user_id = auth.uid()` | Members see only their own progress |
-| `progress_logs_select_admin` | SELECT | Admin | [active-user-guard] AND `is_admin()` | Admins see all logs (for challenge oversight) |
+| `progress_logs_select_authenticated` | SELECT | Any | [active-user-guard] | All members see all logs — required for leaderboard (FR-05.5) |
+| `progress_logs_select_admin` | SELECT | Admin | [active-user-guard] AND `is_admin()` | Admins see all logs (redundant with above but explicit) |
 | `progress_logs_insert_own` | INSERT | Member | [active-user-guard] AND `user_id = auth.uid()` | Members log their own progress |
 | `progress_logs_update_own` | UPDATE | Member | [active-user-guard] AND `user_id = auth.uid()` | Members can edit their own logs (same-day enforcement at app layer) |
 | `progress_logs_delete_blocked` | DELETE | None | `false` | Logs are not deleted |
