@@ -1,0 +1,43 @@
+# Flutter
+.dart_tool/
+.packages
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# macOS
+.DS_Store
+*.swp
+
+# Android
+/android/app/debug
+/android/app/profile
+/android/app/release
+/android/.gradle
+/android/captures/
+/android/local.properties
+/android/**/GeneratedPluginRegistrant.java
+
+# iOS
+/ios/Flutter/
+/ios/Pods/
+/ios/.symlinks/
+/ios/DerivedData/
+/ios/Runner.xcworkspace
+
+# Firebase config — add per platform but never commit secrets
+# ios/Runner/GoogleService-Info.plist
+# android/app/google-services.json
+
+# Environment
+.env
+.env.local
+*.env
+
+# Coverage
+coverage/

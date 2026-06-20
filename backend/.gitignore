@@ -1,0 +1,10 @@
+# Supabase local
+.env.local
+.env
+.temp/
+
+# Deno
+.deno/
+
+# Node (if any tooling)
+node_modules/

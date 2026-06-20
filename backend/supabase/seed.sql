@@ -1,0 +1,8 @@
+-- Connect Buddy system profile
+-- Must run AFTER the profiles table migration exists (Phase 1).
+-- This seed is intentionally empty until Phase 1 migrations are created.
+-- The INSERT will be added when the profiles table migration is ready.
+--
+-- UUID: 00000000-0000-4000-8000-000000000001
+-- Matches: _shared/constants.ts CONNECT_BUDDY_PROFILE_ID
+-- Matches: app_constants.dart connectBuddySystemAccountId

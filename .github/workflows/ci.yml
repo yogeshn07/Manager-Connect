@@ -1,0 +1,55 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  flutter-analyze:
+    name: Flutter Analyze & Test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.22.0'
+          channel: stable
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Verify code generation is up to date
+        run: |
+          dart run build_runner build --delete-conflicting-outputs
+          git diff --exit-code lib/
+
+      - name: Analyze
+        run: flutter analyze --no-fatal-infos
+
+      - name: Run tests
+        run: flutter test
+
+  deno-check:
+    name: Deno Type Check
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend/supabase/functions
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: denoland/setup-deno@v1
+        with:
+          deno-version: v1.x
+
+      - name: Type check shared infrastructure
+        run: deno check _shared/*.ts

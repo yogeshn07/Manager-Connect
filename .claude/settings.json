@@ -1,0 +1,38 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dart pub *)",
+      "Bash(flutter pub *)",
+      "Bash(flutter analyze *)",
+      "Bash(flutter test *)",
+      "Bash(flutter build *)",
+      "Bash(flutter create *)",
+      "Bash(flutter run *)",
+      "Bash(dart compile *)",
+      "WebFetch(domain:github.com)",
+      "Bash(grep -c \"| \\\\`\" \"c:\\\\Users\\\\YOGESH N\\\\OneDrive\\\\Desktop\\\\office_project\\\\docs\\\\rls-security-policies.md\")",
+      "Bash(flutter doctor *)",
+      "Bash(docker version *)",
+      "Bash(docker info *)",
+      "Bash(docker system *)",
+      "Bash(wsl --status)",
+      "Bash(wsl -l -v)",
+      "Bash(supabase --version)",
+      "Bash(supabase status *)",
+      "Bash(supabase start *)",
+      "Bash(supabase stop *)",
+      "Bash(rm -rf \"c:\\\\Users\\\\YOGESH N\\\\OneDrive\\\\Desktop\\\\office_project\\\\backend\\\\supabase\\\\supabase\")",
+      "Bash(rm -f \"c:\\\\Users\\\\YOGESH N\\\\OneDrive\\\\Desktop\\\\office_project\\\\backend\\\\supabase\\\\supabase-debug.log\")",
+      "Bash(mv supabase/config.toml supabase/config.toml.old)",
+      "Bash(mv supabase/migrations supabase/migrations_backup)",
+      "Bash(mv supabase/functions supabase/functions_backup)",
+      "Bash(mv supabase/seed.sql supabase/seed.sql.bak)",
+      "Bash(supabase init *)",
+      "PowerShell(\\(docker inspect public.ecr.aws/supabase/postgres:17.6.1.136 | ConvertFrom-Json\\)[0].Config.Entrypoint; \\(docker inspect public.ecr.aws/supabase/postgres:17.6.1.136 | ConvertFrom-Json\\)[0].Config.Cmd)",
+      "PowerShell(docker run --rm --entrypoint /bin/sh public.ecr.aws/supabase/realtime:v2.107.5 -c \"ls -la /usr/bin/tini 2>/dev/null; file /usr/bin/tini 2>/dev/null; /usr/bin/tini --version 2>&1\")",
+      "PowerShell(docker rmi public.ecr.aws/supabase/realtime:v2.107.5 -f 2>$null)",
+      "PowerShell(docker pull public.ecr.aws/supabase/realtime:v2.107.5 2>&1)",
+      "PowerShell(docker run --rm --entrypoint /bin/sh public.ecr.aws/supabase/realtime:v2.107.5 -c \"/tini --version 2>&1; echo test\")"
+    ]
+  }
+}

@@ -1,0 +1,19 @@
+targets:
+  $default:
+    builders:
+      riverpod_generator:
+        generate_for:
+          include:
+            - lib/**/*.dart
+      freezed:
+        generate_for:
+          include:
+            - lib/**/*.dart
+      json_serializable:
+        generate_for:
+          include:
+            - lib/**/*.dart
+        options:
+          any_map: true
+          checked: true
+          explicit_to_json: true
