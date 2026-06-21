@@ -11,6 +11,9 @@ import 'package:manager_connect/features/auth/presentation/screens/create_profil
 import 'package:manager_connect/features/feed/presentation/screens/feed_screen.dart';
 import 'package:manager_connect/features/feed/presentation/screens/post_detail_screen.dart';
 
+import 'package:manager_connect/features/events/presentation/screens/activities_list_screen.dart';
+import 'package:manager_connect/features/events/presentation/screens/activity_detail_screen.dart';
+
 import 'package:manager_connect/shared/widgets/placeholders/placeholder_screen.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -51,7 +54,7 @@ final List<RouteBase> appRoutes = [
       GoRoute(
         path: RouteNames.events,
         pageBuilder: (context, state) => const NoTransitionPage(
-          child: PlaceholderScreen(title: 'Events'),
+          child: ActivitiesListScreen(),
         ),
       ),
       GoRoute(
@@ -81,6 +84,15 @@ final List<RouteBase> appRoutes = [
     builder: (context, state) {
       final postId = state.pathParameters['id']!;
       return PostDetailScreen(postId: postId);
+    },
+  ),
+
+  GoRoute(
+    parentNavigatorKey: _rootNavigatorKey,
+    path: '/event/:id',
+    builder: (context, state) {
+      final activityId = state.pathParameters['id']!;
+      return ActivityDetailScreen(activityId: activityId);
     },
   ),
 

@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'feed_provider.dart';
+part of 'activities_provider.dart';
 
 // **************************************************************************
 // RiverpodGenerator
@@ -9,52 +9,53 @@ part of 'feed_provider.dart';
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
 
-@ProviderFor(FeedNotifier)
-const feedProvider = FeedNotifierProvider._();
+@ProviderFor(ActivitiesNotifier)
+const activitiesProvider = ActivitiesNotifierProvider._();
 
-final class FeedNotifierProvider
-    extends $NotifierProvider<FeedNotifier, FeedState> {
-  const FeedNotifierProvider._()
+final class ActivitiesNotifierProvider
+    extends $NotifierProvider<ActivitiesNotifier, ActivitiesState> {
+  const ActivitiesNotifierProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
-        name: r'feedProvider',
+        name: r'activitiesProvider',
         isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
 
   @override
-  String debugGetCreateSourceHash() => _$feedNotifierHash();
+  String debugGetCreateSourceHash() => _$activitiesNotifierHash();
 
   @$internal
   @override
-  FeedNotifier create() => FeedNotifier();
+  ActivitiesNotifier create() => ActivitiesNotifier();
 
   /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(FeedState value) {
+  Override overrideWithValue(ActivitiesState value) {
     return $ProviderOverride(
       origin: this,
-      providerOverride: $SyncValueProvider<FeedState>(value),
+      providerOverride: $SyncValueProvider<ActivitiesState>(value),
     );
   }
 }
 
-String _$feedNotifierHash() => r'b1c45903e492b2bced7d40e1a17f45ee1c8b8ebe';
+String _$activitiesNotifierHash() =>
+    r'6593f7226f566217a3b7dfbe7cce539cbfeed228';
 
-abstract class _$FeedNotifier extends $Notifier<FeedState> {
-  FeedState build();
+abstract class _$ActivitiesNotifier extends $Notifier<ActivitiesState> {
+  ActivitiesState build();
   @$mustCallSuper
   @override
   void runBuild() {
     final created = build();
-    final ref = this.ref as $Ref<FeedState, FeedState>;
+    final ref = this.ref as $Ref<ActivitiesState, ActivitiesState>;
     final element =
         ref.element
             as $ClassProviderElement<
-              AnyNotifier<FeedState, FeedState>,
-              FeedState,
+              AnyNotifier<ActivitiesState, ActivitiesState>,
+              ActivitiesState,
               Object?,
               Object?
             >;

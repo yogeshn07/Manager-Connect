@@ -59,7 +59,7 @@ final class PostDetailNotifierProvider
 }
 
 String _$postDetailNotifierHash() =>
-    r'83d510f6c2f9aa015223b95ee61c802c6be31fa8';
+    r'461685869e2f48fde3b7e866210eb09a1523d5b1';
 
 final class PostDetailNotifierFamily extends $Family
     with
