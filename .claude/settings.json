@@ -34,7 +34,16 @@
       "PowerShell(docker pull public.ecr.aws/supabase/realtime:v2.107.5 2>&1)",
       "PowerShell(docker run --rm --entrypoint /bin/sh public.ecr.aws/supabase/realtime:v2.107.5 -c \"/tini --version 2>&1; echo test\")",
       "Bash(supabase db *)",
-      "Bash(docker exec *)"
+      "Bash(docker exec *)",
+      "Bash(git commit -m ' *)",
+      "Bash(timeout 30 supabase functions serve)",
+      "Bash(curl -s -X POST http://127.0.0.1:54321/functions/v1/create-poll -H 'apikey: sb_publishable_ACJWlzQHlZjBrEguHvfOxg_3BJgxAaH' -H 'Content-Type: application/json' -d '{}')",
+      "Bash(curl -s -X POST http://127.0.0.1:54321/functions/v1/cancel-activity -H 'apikey: sb_publishable_ACJWlzQHlZjBrEguHvfOxg_3BJgxAaH' -H 'Content-Type: application/json' -d '{\"activity_id\":\"test\"}')",
+      "Bash(curl -s -X POST http://127.0.0.1:54321/functions/v1/post-activity-update -H 'apikey: sb_publishable_ACJWlzQHlZjBrEguHvfOxg_3BJgxAaH' -H 'Content-Type: application/json' -d '{\"activity_id\":\"test\",\"content\":\"update\"}')",
+      "Bash(curl -s -X POST http://127.0.0.1:54321/functions/v1/create-recognition -H 'apikey: sb_publishable_ACJWlzQHlZjBrEguHvfOxg_3BJgxAaH' -H 'Content-Type: application/json' -d '{\"recipient_ids\":[],\"category_tag\":\"invalid\",\"message\":\"test\"}')",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" -X OPTIONS \"http://127.0.0.1:54321/functions/v1/create-poll\" -H \"Origin: http://localhost\" -H \"Access-Control-Request-Method: POST\")",
+      "Bash(git add *)",
+      "Bash(git commit *)"
     ]
   }
 }
