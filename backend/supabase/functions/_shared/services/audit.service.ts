@@ -33,10 +33,17 @@ interface AuditEntry {
   metadata?: Record<string, unknown>;
 }
 
+const UUID_REGEX =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 export async function writeAuditLog(
   adminClient: SupabaseClient,
   entry: AuditEntry,
 ): Promise<void> {
+  if (!UUID_REGEX.test(entry.adminId)) {
+    return;
+  }
+
   const { error } = await adminClient.from('admin_audit_log').insert({
     admin_id: entry.adminId,
     action_type: entry.actionType,
