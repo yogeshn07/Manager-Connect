@@ -10,6 +10,9 @@ class ProfileDto {
     required this.isActive,
     required this.isSystemAccount,
     required this.onboardingCompleted,
+    this.notificationPreferences = const {},
+    this.lastActiveAt,
+    this.createdAt,
   });
 
   final String id;
@@ -22,8 +25,12 @@ class ProfileDto {
   final bool isActive;
   final bool isSystemAccount;
   final bool onboardingCompleted;
+  final Map<String, bool> notificationPreferences;
+  final DateTime? lastActiveAt;
+  final DateTime? createdAt;
 
   factory ProfileDto.fromJson(Map<String, dynamic> json) {
+    final prefs = json['notification_preferences'];
     return ProfileDto(
       id: json['id'] as String,
       fullName: json['full_name'] as String,
@@ -36,6 +43,15 @@ class ProfileDto {
       isActive: json['is_active'] as bool,
       isSystemAccount: json['is_system_account'] as bool,
       onboardingCompleted: json['onboarding_completed'] as bool,
+      notificationPreferences: prefs is Map<String, dynamic>
+          ? prefs.map((k, v) => MapEntry(k, v as bool? ?? true))
+          : {},
+      lastActiveAt: json['last_active_at'] != null
+          ? DateTime.tryParse(json['last_active_at'] as String)
+          : null,
+      createdAt: json['created_at'] != null
+          ? DateTime.tryParse(json['created_at'] as String)
+          : null,
     );
   }
 }

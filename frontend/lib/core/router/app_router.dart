@@ -24,6 +24,8 @@ import 'package:manager_connect/features/analytics/presentation/screens/rankings
 
 import 'package:manager_connect/features/notifications/presentation/screens/notification_center_screen.dart';
 
+import 'package:manager_connect/features/profile/presentation/screens/profile_screen.dart';
+
 import 'package:manager_connect/shared/widgets/placeholders/placeholder_screen.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -82,7 +84,7 @@ final List<RouteBase> appRoutes = [
       GoRoute(
         path: RouteNames.profile,
         pageBuilder: (context, state) => const NoTransitionPage(
-          child: PlaceholderScreen(title: 'Profile'),
+          child: ProfileScreen(),
         ),
       ),
     ],

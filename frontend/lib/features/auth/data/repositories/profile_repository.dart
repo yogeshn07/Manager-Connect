@@ -11,7 +11,8 @@ class ProfileRepository {
 
   static const _selectColumns =
       'id, full_name, avatar_url, title, bio, interest_tags, '
-      'app_role, is_active, is_system_account, onboarding_completed';
+      'app_role, is_active, is_system_account, onboarding_completed, '
+      'notification_preferences, last_active_at, created_at';
 
   Future<ProfileDto?> getProfile(String userId) async {
     try {
@@ -23,6 +24,30 @@ class ProfileRepository {
 
       if (response == null) return null;
       return ProfileDto.fromJson(response);
+    } catch (e) {
+      throw mapSupabaseError(e);
+    }
+  }
+
+  Future<void> updateProfile({
+    required String userId,
+    String? fullName,
+    String? title,
+    String? bio,
+    List<String>? interestTags,
+    Map<String, bool>? notificationPreferences,
+  }) async {
+    try {
+      final updates = <String, dynamic>{};
+      if (fullName != null) updates['full_name'] = fullName;
+      if (title != null) updates['title'] = title;
+      if (bio != null) updates['bio'] = bio;
+      if (interestTags != null) updates['interest_tags'] = interestTags;
+      if (notificationPreferences != null) {
+        updates['notification_preferences'] = notificationPreferences;
+      }
+      if (updates.isEmpty) return;
+      await _client.from(Table.profiles).update(updates).eq('id', userId);
     } catch (e) {
       throw mapSupabaseError(e);
     }

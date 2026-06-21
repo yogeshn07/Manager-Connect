@@ -94,7 +94,7 @@ final class RankingsNotifierProvider
   }
 }
 
-String _$rankingsNotifierHash() => r'523e1fdca81b1efc3a0e93d90692fa8ba1654586';
+String _$rankingsNotifierHash() => r'8193eb6edaf0adad563af986037aed01d7e840cf';
 
 abstract class _$RankingsNotifier extends $Notifier<RankingsState> {
   RankingsState build();
