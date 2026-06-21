@@ -26,6 +26,11 @@ import 'package:manager_connect/features/notifications/presentation/screens/noti
 
 import 'package:manager_connect/features/profile/presentation/screens/profile_screen.dart';
 
+import 'package:manager_connect/features/admin/presentation/screens/admin_dashboard_screen.dart';
+import 'package:manager_connect/features/admin/presentation/screens/member_management_screen.dart';
+import 'package:manager_connect/features/admin/presentation/screens/invitation_management_screen.dart';
+import 'package:manager_connect/features/admin/presentation/screens/moderation_queue_screen.dart';
+
 import 'package:manager_connect/shared/widgets/placeholders/placeholder_screen.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -141,6 +146,31 @@ final List<RouteBase> appRoutes = [
   GoRoute(
     parentNavigatorKey: _rootNavigatorKey,
     path: RouteNames.admin,
-    builder: (context, state) => const PlaceholderScreen(title: 'Admin'),
+    builder: (context, state) => const AdminDashboardScreen(),
+  ),
+
+  GoRoute(
+    parentNavigatorKey: _rootNavigatorKey,
+    path: RouteNames.adminMembers,
+    builder: (context, state) => const MemberManagementScreen(),
+  ),
+
+  GoRoute(
+    parentNavigatorKey: _rootNavigatorKey,
+    path: '/admin/invitations',
+    builder: (context, state) => const InvitationManagementScreen(),
+  ),
+
+  GoRoute(
+    parentNavigatorKey: _rootNavigatorKey,
+    path: RouteNames.adminFlagged,
+    builder: (context, state) => const ModerationQueueScreen(),
+  ),
+
+  GoRoute(
+    parentNavigatorKey: _rootNavigatorKey,
+    path: RouteNames.adminAttendance,
+    builder: (context, state) =>
+        const PlaceholderScreen(title: 'Record Attendance'),
   ),
 ];
