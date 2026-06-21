@@ -7,13 +7,14 @@ String? guardRedirect({
   required GoRouterState routerState,
 }) {
   final location = routerState.matchedLocation;
+  final isSplash = location == '/';
   final isAuthRoute = location == RouteNames.welcome ||
       location == RouteNames.verifyOtp ||
       location == RouteNames.createProfile;
   final isAdminRoute = location.startsWith('/admin');
 
   return switch (authState) {
-    AppAuthStateInitial() => null,
+    AppAuthStateInitial() => isSplash ? null : '/',
     AppAuthStateUnauthenticated() => isAuthRoute ? null : RouteNames.welcome,
     AppAuthStateDeactivated() => isAuthRoute ? null : RouteNames.welcome,
     AppAuthStateAuthenticated(:final session) => () {
@@ -22,7 +23,7 @@ String? guardRedirect({
               ? null
               : RouteNames.createProfile;
         }
-        if (isAuthRoute) return RouteNames.feed;
+        if (isSplash || isAuthRoute) return RouteNames.feed;
         if (isAdminRoute && session.role != AppRole.admin) {
           return RouteNames.feed;
         }

@@ -3,39 +3,38 @@ import 'package:go_router/go_router.dart';
 import 'package:manager_connect/core/constants/route_names.dart';
 import 'package:manager_connect/shared/widgets/bottom_nav/main_scaffold.dart';
 
-// Auth screens
+import 'package:manager_connect/features/auth/presentation/screens/splash_screen.dart';
 import 'package:manager_connect/features/auth/presentation/screens/welcome_screen.dart';
 import 'package:manager_connect/features/auth/presentation/screens/verify_otp_screen.dart';
 import 'package:manager_connect/features/auth/presentation/screens/create_profile_screen.dart';
 
-// Placeholder screens for tabs not yet implemented
 import 'package:manager_connect/shared/widgets/placeholders/placeholder_screen.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 final _shellNavigatorKey = GlobalKey<NavigatorState>();
 
 final List<RouteBase> appRoutes = [
-  // Redirect root
   GoRoute(
     path: '/',
-    redirect: (_, __) => RouteNames.feed,
+    builder: (context, state) => const SplashScreen(),
   ),
 
-  // Auth group
   GoRoute(
     path: RouteNames.welcome,
     builder: (context, state) => const WelcomeScreen(),
   ),
   GoRoute(
     path: RouteNames.verifyOtp,
-    builder: (context, state) => const VerifyOtpScreen(),
+    builder: (context, state) {
+      final email = state.extra as String? ?? '';
+      return VerifyOtpScreen(email: email);
+    },
   ),
   GoRoute(
     path: RouteNames.createProfile,
     builder: (context, state) => const CreateProfileScreen(),
   ),
 
-  // App shell with bottom navigation
   ShellRoute(
     navigatorKey: _shellNavigatorKey,
     builder: (context, state, child) => MainScaffold(child: child),
@@ -73,7 +72,6 @@ final List<RouteBase> appRoutes = [
     ],
   ),
 
-  // Stack routes (over tabs)
   GoRoute(
     parentNavigatorKey: _rootNavigatorKey,
     path: RouteNames.notifications,
@@ -81,7 +79,6 @@ final List<RouteBase> appRoutes = [
         const PlaceholderScreen(title: 'Notifications'),
   ),
 
-  // Admin group
   GoRoute(
     parentNavigatorKey: _rootNavigatorKey,
     path: RouteNames.admin,
