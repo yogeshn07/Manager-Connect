@@ -16,7 +16,13 @@ import 'package:manager_connect/features/events/presentation/screens/activity_de
 
 import 'package:manager_connect/features/polls/presentation/screens/poll_detail_screen.dart';
 
-import 'package:manager_connect/features/recognition/presentation/screens/recognition_feed_screen.dart';
+import 'package:manager_connect/features/growth/presentation/screens/challenge_list_screen.dart';
+import 'package:manager_connect/features/growth/presentation/screens/challenge_detail_screen.dart';
+
+import 'package:manager_connect/features/analytics/presentation/screens/analytics_screen.dart';
+import 'package:manager_connect/features/analytics/presentation/screens/rankings_screen.dart';
+
+import 'package:manager_connect/features/notifications/presentation/screens/notification_center_screen.dart';
 
 import 'package:manager_connect/shared/widgets/placeholders/placeholder_screen.dart';
 
@@ -64,13 +70,13 @@ final List<RouteBase> appRoutes = [
       GoRoute(
         path: RouteNames.growth,
         pageBuilder: (context, state) => const NoTransitionPage(
-          child: RecognitionFeedScreen(),
+          child: ChallengeListScreen(),
         ),
       ),
       GoRoute(
         path: RouteNames.analytics,
         pageBuilder: (context, state) => const NoTransitionPage(
-          child: PlaceholderScreen(title: 'Analytics'),
+          child: AnalyticsScreen(),
         ),
       ),
       GoRoute(
@@ -111,9 +117,23 @@ final List<RouteBase> appRoutes = [
 
   GoRoute(
     parentNavigatorKey: _rootNavigatorKey,
+    path: '/challenge/:id',
+    builder: (context, state) {
+      final challengeId = state.pathParameters['id']!;
+      return ChallengeDetailScreen(challengeId: challengeId);
+    },
+  ),
+
+  GoRoute(
+    parentNavigatorKey: _rootNavigatorKey,
+    path: RouteNames.fullRankings,
+    builder: (context, state) => const RankingsScreen(),
+  ),
+
+  GoRoute(
+    parentNavigatorKey: _rootNavigatorKey,
     path: RouteNames.notifications,
-    builder: (context, state) =>
-        const PlaceholderScreen(title: 'Notifications'),
+    builder: (context, state) => const NotificationCenterScreen(),
   ),
 
   GoRoute(
