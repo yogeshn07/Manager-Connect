@@ -8,6 +8,9 @@ import 'package:manager_connect/features/auth/presentation/screens/welcome_scree
 import 'package:manager_connect/features/auth/presentation/screens/verify_otp_screen.dart';
 import 'package:manager_connect/features/auth/presentation/screens/create_profile_screen.dart';
 
+import 'package:manager_connect/features/feed/presentation/screens/feed_screen.dart';
+import 'package:manager_connect/features/feed/presentation/screens/post_detail_screen.dart';
+
 import 'package:manager_connect/shared/widgets/placeholders/placeholder_screen.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -42,7 +45,7 @@ final List<RouteBase> appRoutes = [
       GoRoute(
         path: RouteNames.feed,
         pageBuilder: (context, state) => const NoTransitionPage(
-          child: PlaceholderScreen(title: 'Feed'),
+          child: FeedScreen(),
         ),
       ),
       GoRoute(
@@ -70,6 +73,15 @@ final List<RouteBase> appRoutes = [
         ),
       ),
     ],
+  ),
+
+  GoRoute(
+    parentNavigatorKey: _rootNavigatorKey,
+    path: '/post/:id',
+    builder: (context, state) {
+      final postId = state.pathParameters['id']!;
+      return PostDetailScreen(postId: postId);
+    },
   ),
 
   GoRoute(
