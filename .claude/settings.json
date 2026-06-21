@@ -43,7 +43,8 @@
       "Bash(curl -s -X POST http://127.0.0.1:54321/functions/v1/create-recognition -H 'apikey: sb_publishable_ACJWlzQHlZjBrEguHvfOxg_3BJgxAaH' -H 'Content-Type: application/json' -d '{\"recipient_ids\":[],\"category_tag\":\"invalid\",\"message\":\"test\"}')",
       "Bash(curl -s -o /dev/null -w \"%{http_code}\" -X OPTIONS \"http://127.0.0.1:54321/functions/v1/create-poll\" -H \"Origin: http://localhost\" -H \"Access-Control-Request-Method: POST\")",
       "Bash(git add *)",
-      "Bash(git commit *)"
+      "Bash(git commit *)",
+      "Bash(curl -s -X POST http://127.0.0.1:54321/auth/v1/admin/users -H 'Authorization: Bearer __TRACKED_VAR__' -H 'apikey: __TRACKED_VAR__' -H 'Content-Type: application/json' -d '{\"email\":\"admin@test.com\",\"password\":\"testpass123\",\"email_confirm\":true}')"
     ]
   }
 }
