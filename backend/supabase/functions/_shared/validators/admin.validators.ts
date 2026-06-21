@@ -113,3 +113,62 @@ export function validatePinAnnouncement(body: unknown): PinAnnouncementInput {
       : null;
   return { post_id: postId, action: b.action as 'pin' | 'unpin' };
 }
+
+export interface ResolveFlagInput {
+  flag_id: string;
+  action: 'delete' | 'dismiss';
+}
+
+export function validateResolveFlag(body: unknown): ResolveFlagInput {
+  const b = body as Record<string, unknown>;
+  if (!b || typeof b.flag_id !== 'string' || !b.flag_id.trim()) {
+    throw new AppError('VALIDATION_ERROR', 'flag_id is required');
+  }
+  if (typeof b.action !== 'string' || (b.action !== 'delete' && b.action !== 'dismiss')) {
+    throw new AppError(
+      'VALIDATION_ERROR',
+      'action must be "delete" or "dismiss"',
+    );
+  }
+  return { flag_id: b.flag_id.trim(), action: b.action as 'delete' | 'dismiss' };
+}
+
+export interface DeactivateUserInput {
+  user_id: string;
+  reactivate: boolean;
+}
+
+export function validateDeactivateUser(body: unknown): DeactivateUserInput {
+  const b = body as Record<string, unknown>;
+  if (!b || typeof b.user_id !== 'string' || !b.user_id.trim()) {
+    throw new AppError('VALIDATION_ERROR', 'user_id is required');
+  }
+  const reactivate = b.reactivate === true;
+  return { user_id: b.user_id.trim(), reactivate };
+}
+
+export interface RemoveUserInput {
+  user_id: string;
+}
+
+export function validateRemoveUser(body: unknown): RemoveUserInput {
+  const b = body as Record<string, unknown>;
+  if (!b || typeof b.user_id !== 'string' || !b.user_id.trim()) {
+    throw new AppError('VALIDATION_ERROR', 'user_id is required');
+  }
+  return { user_id: b.user_id.trim() };
+}
+
+export interface RevokeInvitationInput {
+  invitation_id: string;
+}
+
+export function validateRevokeInvitation(
+  body: unknown,
+): RevokeInvitationInput {
+  const b = body as Record<string, unknown>;
+  if (!b || typeof b.invitation_id !== 'string' || !b.invitation_id.trim()) {
+    throw new AppError('VALIDATION_ERROR', 'invitation_id is required');
+  }
+  return { invitation_id: b.invitation_id.trim() };
+}
