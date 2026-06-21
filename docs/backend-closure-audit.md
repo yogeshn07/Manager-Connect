@@ -218,23 +218,33 @@ nothing to commit, working tree clean
 | 6 | No TODO/FIXME markers | **PASS** — 0 found |
 | 7 | No hardcoded local URLs | **PASS** — 0 found |
 | 8 | No test-only code | **PASS** |
-| 9 | Connect Buddy via migration/seed | **FAIL** — seed.sql is empty, requires manual setup |
+| 9 | Connect Buddy via migration/seed | **PASS** — seed.sql provisions auth.users + profiles (resolved 2026-06-21) |
 | 10 | Fresh reset + deploy | **PASS** — 72 migrations + 21 functions compile |
 
 ---
 
 ## Blockers
 
-| # | Blocker | Severity | Affected Functions | Fix Required |
-|---|---------|----------|--------------------|-------------|
-| 1 | Connect Buddy system account not in seed.sql | **BLOCKER** | post-connect-buddy-message, scheduled-connect-buddy, create-profile | Populate seed.sql with auth.users + profiles INSERT |
+| # | Blocker | Severity | Status | Resolution |
+|---|---------|----------|--------|-----------|
+| 1 | Connect Buddy system account not in seed.sql | **BLOCKER** | **RESOLVED** | Populated seed.sql with auth.users + profiles INSERT (2026-06-21) |
+
+### Blocker Resolution Verification
+
+After populating `seed.sql`, a fresh `supabase db reset` was performed and all 3 affected functions tested:
+
+| Function | Test | Result |
+|----------|------|--------|
+| post-connect-buddy-message | Post as Connect Buddy on fresh DB | `{"post_id":"6e8a..."}` — **PASS** |
+| scheduled-connect-buddy | community_update trigger on fresh DB | `{"trigger_type":"community_update","post_id":"eb7d...","skipped":false}` — **PASS** |
+| create-profile | Full welcome flow with CB post on fresh DB | `{"profile_id":"6874..."}` — **PASS** |
+
+Database evidence: 3 Connect Buddy posts created automatically, authored by `00000000-0000-4000-8000-000000000001`.
 
 ---
 
 ## Verdict
 
-**BACKEND COMPLETE cannot be declared.** One deployment blocker remains:
+**BACKEND COMPLETE.**
 
-The Connect Buddy system account (`00000000-0000-4000-8000-000000000001`) must be provisioned automatically via `seed.sql` (or a migration). Currently requires manual SQL insertion after each `supabase db reset`.
-
-Once `seed.sql` is populated with the Connect Buddy auth.users + profiles entries, all 21 functions will work on a fresh deployment with zero manual intervention.
+All 21 Edge Functions exist, compile, and are referenced in API contracts. Zero dead code, zero TODO/FIXME markers, zero hardcoded URLs. Connect Buddy system account is provisioned automatically via `seed.sql`. Fresh `supabase db reset` + `supabase functions serve` succeeds with zero manual intervention. Schema drift = 0.
