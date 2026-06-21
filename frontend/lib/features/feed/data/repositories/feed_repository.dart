@@ -12,11 +12,11 @@ class FeedRepository {
 
   static const _postSelect =
       'id, author_id, content, is_deleted, created_at, '
-      'profiles(full_name, avatar_url, is_system_account)';
+      'profiles!posts_author_id_fkey(full_name, avatar_url, is_system_account)';
 
   static const _commentSelect =
       'id, post_id, author_id, content, created_at, '
-      'profiles(full_name, avatar_url, is_system_account)';
+      'profiles!comments_author_id_fkey(full_name, avatar_url, is_system_account)';
 
   // --- Feed ---
 
