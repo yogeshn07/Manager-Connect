@@ -66,24 +66,69 @@ final List<RouteBase> appRoutes = [
         pageBuilder: (context, state) => const NoTransitionPage(
           child: FeedScreen(),
         ),
+        routes: [
+          GoRoute(
+            path: 'post/:id',
+            parentNavigatorKey: _rootNavigatorKey,
+            builder: (context, state) {
+              final postId = state.pathParameters['id']!;
+              return PostDetailScreen(postId: postId);
+            },
+          ),
+        ],
       ),
       GoRoute(
         path: RouteNames.events,
         pageBuilder: (context, state) => const NoTransitionPage(
           child: ActivitiesListScreen(),
         ),
+        routes: [
+          GoRoute(
+            path: 'event/:id',
+            parentNavigatorKey: _rootNavigatorKey,
+            builder: (context, state) {
+              final activityId = state.pathParameters['id']!;
+              return ActivityDetailScreen(activityId: activityId);
+            },
+          ),
+          GoRoute(
+            path: 'poll/:id',
+            parentNavigatorKey: _rootNavigatorKey,
+            builder: (context, state) {
+              final pollId = state.pathParameters['id']!;
+              return PollDetailScreen(pollId: pollId);
+            },
+          ),
+        ],
       ),
       GoRoute(
         path: RouteNames.growth,
         pageBuilder: (context, state) => const NoTransitionPage(
           child: ChallengeListScreen(),
         ),
+        routes: [
+          GoRoute(
+            path: 'challenge/:id',
+            parentNavigatorKey: _rootNavigatorKey,
+            builder: (context, state) {
+              final challengeId = state.pathParameters['id']!;
+              return ChallengeDetailScreen(challengeId: challengeId);
+            },
+          ),
+        ],
       ),
       GoRoute(
         path: RouteNames.analytics,
         pageBuilder: (context, state) => const NoTransitionPage(
           child: AnalyticsScreen(),
         ),
+        routes: [
+          GoRoute(
+            path: 'rankings',
+            parentNavigatorKey: _rootNavigatorKey,
+            builder: (context, state) => const RankingsScreen(),
+          ),
+        ],
       ),
       GoRoute(
         path: RouteNames.profile,
@@ -92,48 +137,6 @@ final List<RouteBase> appRoutes = [
         ),
       ),
     ],
-  ),
-
-  GoRoute(
-    parentNavigatorKey: _rootNavigatorKey,
-    path: '/post/:id',
-    builder: (context, state) {
-      final postId = state.pathParameters['id']!;
-      return PostDetailScreen(postId: postId);
-    },
-  ),
-
-  GoRoute(
-    parentNavigatorKey: _rootNavigatorKey,
-    path: '/event/:id',
-    builder: (context, state) {
-      final activityId = state.pathParameters['id']!;
-      return ActivityDetailScreen(activityId: activityId);
-    },
-  ),
-
-  GoRoute(
-    parentNavigatorKey: _rootNavigatorKey,
-    path: '/poll/:id',
-    builder: (context, state) {
-      final pollId = state.pathParameters['id']!;
-      return PollDetailScreen(pollId: pollId);
-    },
-  ),
-
-  GoRoute(
-    parentNavigatorKey: _rootNavigatorKey,
-    path: '/challenge/:id',
-    builder: (context, state) {
-      final challengeId = state.pathParameters['id']!;
-      return ChallengeDetailScreen(challengeId: challengeId);
-    },
-  ),
-
-  GoRoute(
-    parentNavigatorKey: _rootNavigatorKey,
-    path: RouteNames.fullRankings,
-    builder: (context, state) => const RankingsScreen(),
   ),
 
   GoRoute(
@@ -147,29 +150,24 @@ final List<RouteBase> appRoutes = [
     path: RouteNames.admin,
     builder: (context, state) => const AdminDashboardScreen(),
   ),
-
   GoRoute(
     parentNavigatorKey: _rootNavigatorKey,
     path: RouteNames.adminMembers,
     builder: (context, state) => const MemberManagementScreen(),
   ),
-
   GoRoute(
     parentNavigatorKey: _rootNavigatorKey,
     path: '/admin/invitations',
     builder: (context, state) => const InvitationManagementScreen(),
   ),
-
   GoRoute(
     parentNavigatorKey: _rootNavigatorKey,
     path: RouteNames.adminFlagged,
     builder: (context, state) => const ModerationQueueScreen(),
   ),
-
   GoRoute(
     parentNavigatorKey: _rootNavigatorKey,
     path: RouteNames.adminAttendance,
-    builder: (context, state) =>
-        const AttendanceRecordingScreen(),
+    builder: (context, state) => const AttendanceRecordingScreen(),
   ),
 ];

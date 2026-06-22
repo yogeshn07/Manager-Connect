@@ -144,7 +144,7 @@ class _ChallengeListScreenState extends ConsumerState<ChallengeListScreen> {
       margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       child: InkWell(
         borderRadius: BorderRadius.circular(12),
-        onTap: () => context.push('/challenge/${challenge.id}'),
+        onTap: () => context.push('/growth/challenge/${challenge.id}'),
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(

@@ -126,7 +126,7 @@ class _ActivitiesListScreenState
           final activity = activities[index];
           return ActivityCard(
             activity: activity,
-            onTap: () => context.push('/event/${activity.id}'),
+            onTap: () => context.push('/events/event/${activity.id}'),
           );
         },
       ),

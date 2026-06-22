@@ -143,7 +143,7 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
   }
 
   void _openPostDetail(String postId) {
-    context.push('/post/$postId');
+    context.push('/feed/post/$postId');
   }
 
   void _showCreatePost(BuildContext context) {
