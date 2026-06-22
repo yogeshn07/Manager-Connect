@@ -32,8 +32,8 @@
   <title>Manager Connect</title>
   <link rel="manifest" href="manifest.json">
 
-  <!-- Passkeys Web SDK — required by supabase_flutter's transitive passkeys_web dependency -->
-  <script src="https://github.com/nicokoenig/flutter-passkeys/releases/download/2.4.0/bundle.js" defer></script>
+  <!-- Passkeys Web SDK stub — supabase_flutter transitively depends on passkeys_web which checks for this global -->
+  <script>window.Passkeys={isSupported:function(){return false;}};</script>
 </head>
 <body>
   <!--
