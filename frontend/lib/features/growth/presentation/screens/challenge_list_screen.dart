@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:manager_connect/features/growth/data/models/challenge_dto.dart';
 import 'package:manager_connect/features/growth/presentation/providers/challenge_provider.dart';
+import 'package:manager_connect/features/growth/presentation/screens/create_challenge_screen.dart';
 import 'package:manager_connect/features/recognition/presentation/screens/recognition_feed_screen.dart';
 import 'package:manager_connect/shared/widgets/error_state.dart';
 import 'package:manager_connect/shared/widgets/loading_state.dart';
@@ -254,41 +255,7 @@ class _ChallengeListScreenState extends ConsumerState<ChallengeListScreen> {
       context: context,
       isScrollControlled: true,
       useSafeArea: true,
-      builder: (_) => const _CreateChallengePlaceholder(),
-    );
-  }
-}
-
-/// Placeholder until CreateChallengeScreen is created in a future sprint.
-class _CreateChallengePlaceholder extends StatelessWidget {
-  const _CreateChallengePlaceholder();
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(24),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(Icons.construction,
-              size: 48,
-              color: Theme.of(context).colorScheme.onSurfaceVariant),
-          const SizedBox(height: 16),
-          Text('Create Challenge',
-              style: Theme.of(context).textTheme.titleLarge),
-          const SizedBox(height: 8),
-          Text('Coming soon',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  )),
-          const SizedBox(height: 24),
-          FilledButton.tonal(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Close'),
-          ),
-          const SizedBox(height: 16),
-        ],
-      ),
+      builder: (_) => const CreateChallengeScreen(),
     );
   }
 }

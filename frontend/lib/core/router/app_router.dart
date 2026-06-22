@@ -30,8 +30,7 @@ import 'package:manager_connect/features/admin/presentation/screens/admin_dashbo
 import 'package:manager_connect/features/admin/presentation/screens/member_management_screen.dart';
 import 'package:manager_connect/features/admin/presentation/screens/invitation_management_screen.dart';
 import 'package:manager_connect/features/admin/presentation/screens/moderation_queue_screen.dart';
-
-import 'package:manager_connect/shared/widgets/placeholders/placeholder_screen.dart';
+import 'package:manager_connect/features/admin/presentation/screens/attendance_recording_screen.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 final _shellNavigatorKey = GlobalKey<NavigatorState>();
@@ -171,6 +170,6 @@ final List<RouteBase> appRoutes = [
     parentNavigatorKey: _rootNavigatorKey,
     path: RouteNames.adminAttendance,
     builder: (context, state) =>
-        const PlaceholderScreen(title: 'Record Attendance'),
+        const AttendanceRecordingScreen(),
   ),
 ];
