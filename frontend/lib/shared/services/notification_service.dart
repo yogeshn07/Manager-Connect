@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:flutter/foundation.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:manager_connect/core/constants/supabase_constants.dart';
@@ -8,6 +9,8 @@ class NotificationService {
   NotificationService._();
 
   static Future<void> initialize() async {
+    if (kIsWeb) return;
+
     final messaging = FirebaseMessaging.instance;
     await messaging.requestPermission();
 
@@ -17,6 +20,7 @@ class NotificationService {
   }
 
   static Future<void> registerToken(String userId) async {
+    if (kIsWeb) return;
     try {
       final token = await FirebaseMessaging.instance.getToken();
       if (token == null) return;
@@ -41,17 +45,14 @@ class NotificationService {
 
   static void _onTokenRefresh(String token) {
     log('FCM token refreshed: ${token.substring(0, 10)}...');
-    // Token update will be handled when auth state is available
   }
 
   static void _handleForegroundMessage(RemoteMessage message) {
     log('Foreground notification: ${message.notification?.title}');
-    // Full implementation in Sprint 5
   }
 }
 
 @pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  // Background handler must be top-level function
   log('Background notification: ${message.notification?.title}');
 }

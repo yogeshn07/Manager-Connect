@@ -1,23 +1,22 @@
 import 'dart:developer';
 
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:manager_connect/app.dart';
 import 'package:manager_connect/core/config/env.dart';
-import 'package:manager_connect/shared/services/notification_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  try {
-    await Firebase.initializeApp();
-    FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
-  } catch (e) {
-    log('Firebase init skipped: $e');
+  if (!kIsWeb) {
+    try {
+      await Firebase.initializeApp();
+    } catch (e) {
+      log('Firebase init skipped: $e');
+    }
   }
 
   if (!Env.isConfigured) {
@@ -30,12 +29,6 @@ void main() async {
     publishableKey: Env.supabaseAnonKey,
   );
 
-  try {
-    await NotificationService.initialize();
-  } catch (e) {
-    log('Notification init skipped: $e');
-  }
-
   ErrorWidget.builder = (FlutterErrorDetails details) {
     return MaterialApp(
       home: Scaffold(
@@ -45,10 +38,7 @@ void main() async {
             child: Text(
               'Something went wrong.\nPlease restart the app.',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey[700],
-              ),
+              style: TextStyle(fontSize: 16, color: Colors.grey[700]),
             ),
           ),
         ),
@@ -81,7 +71,7 @@ class _MissingEnvApp extends StatelessWidget {
                 const SizedBox(height: 8),
                 Text(
                   kDebugMode
-                      ? 'Add --dart-define=SUPABASE_URL=... and --dart-define=SUPABASE_ANON_KEY=...'
+                      ? 'Launch with --dart-define=SUPABASE_URL=... --dart-define=SUPABASE_ANON_KEY=...'
                       : 'App configuration is incomplete.',
                   textAlign: TextAlign.center,
                   style: TextStyle(color: Colors.grey[700]),
