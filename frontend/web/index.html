@@ -32,8 +32,18 @@
   <title>Manager Connect</title>
   <link rel="manifest" href="manifest.json">
 
-  <!-- Passkeys Web SDK stub — supabase_flutter transitively depends on passkeys_web which checks for this global -->
-  <script>window.Passkeys={isSupported:function(){return false;}};</script>
+  <!-- Passkeys Web SDK stub — supabase_flutter transitively depends on passkeys_web which expects PasskeyAuthenticator global -->
+  <script>
+    var PasskeyAuthenticator = {
+      init: function() { return Promise.resolve(); },
+      register: function() { return Promise.reject('Passkeys not configured'); },
+      login: function() { return Promise.reject('Passkeys not configured'); },
+      cancelCurrentAuthenticatorOperation: function() {},
+      isUserVerifyingPlatformAuthenticatorAvailable: function() { return Promise.resolve(false); },
+      isConditionalMediationAvailable: function() { return Promise.resolve(false); },
+      hasPasskeySupport: function() { return Promise.resolve(false); }
+    };
+  </script>
 </head>
 <body>
   <!--

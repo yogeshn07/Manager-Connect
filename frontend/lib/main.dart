@@ -20,14 +20,19 @@ void main() async {
   }
 
   if (!Env.isConfigured) {
-    runApp(const _MissingEnvApp());
+    runApp(const _ErrorApp(message: 'Missing SUPABASE_URL or SUPABASE_ANON_KEY'));
     return;
   }
 
-  await Supabase.initialize(
-    url: Env.supabaseUrl,
-    publishableKey: Env.supabaseAnonKey,
-  );
+  try {
+    await Supabase.initialize(
+      url: Env.supabaseUrl,
+      publishableKey: Env.supabaseAnonKey,
+    );
+  } catch (e) {
+    runApp(_ErrorApp(message: 'Supabase init failed: $e'));
+    return;
+  }
 
   ErrorWidget.builder = (FlutterErrorDetails details) {
     return MaterialApp(
@@ -36,9 +41,9 @@ void main() async {
           child: Padding(
             padding: const EdgeInsets.all(24),
             child: Text(
-              'Something went wrong.\nPlease restart the app.',
+              'Something went wrong.\n${details.exceptionAsString()}',
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 16, color: Colors.grey[700]),
+              style: TextStyle(fontSize: 14, color: Colors.grey[700]),
             ),
           ),
         ),
@@ -49,8 +54,9 @@ void main() async {
   runApp(const ProviderScope(child: App()));
 }
 
-class _MissingEnvApp extends StatelessWidget {
-  const _MissingEnvApp();
+class _ErrorApp extends StatelessWidget {
+  const _ErrorApp({required this.message});
+  final String message;
 
   @override
   Widget build(BuildContext context) {
@@ -62,20 +68,9 @@ class _MissingEnvApp extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.warning_amber, size: 48, color: Colors.orange),
+                const Icon(Icons.error_outline, size: 48, color: Colors.red),
                 const SizedBox(height: 16),
-                const Text(
-                  'Missing Configuration',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  kDebugMode
-                      ? 'Launch with --dart-define=SUPABASE_URL=... --dart-define=SUPABASE_ANON_KEY=...'
-                      : 'App configuration is incomplete.',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.grey[700]),
-                ),
+                Text(message, textAlign: TextAlign.center),
               ],
             ),
           ),
