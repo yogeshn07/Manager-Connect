@@ -96,7 +96,7 @@ final class MemberManagementNotifierProvider
 }
 
 String _$memberManagementNotifierHash() =>
-    r'bc1e5e176d85a59de1a8ed6e0c526afc21cc35d8';
+    r'3882188d2be5de7f553139b129776d7ad9603ccf';
 
 abstract class _$MemberManagementNotifier
     extends $Notifier<MemberManagementState> {

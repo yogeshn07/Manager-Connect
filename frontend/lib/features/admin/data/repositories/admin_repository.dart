@@ -82,6 +82,20 @@ class AdminRepository {
     }
   }
 
+  Future<void> removeUser(String userId) async {
+    try {
+      final response = await _client.functions.invoke(
+        'remove-user',
+        body: {'user_id': userId},
+      );
+      _checkEfResponse(response, 'remove user');
+    } on AppException {
+      rethrow;
+    } catch (e) {
+      throw mapSupabaseError(e);
+    }
+  }
+
   // --- Invitations ---
 
   Future<List<InvitationDto>> getInvitations() async {

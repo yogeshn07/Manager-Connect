@@ -210,6 +210,15 @@ class _MemberManagementScreenState
                     _confirmToggleActive(member);
                   },
                 ),
+                ListTile(
+                  leading: Icon(Icons.delete_forever, color: theme.colorScheme.error),
+                  title: Text('Remove Member', style: TextStyle(color: theme.colorScheme.error)),
+                  subtitle: const Text('Anonymizes profile permanently'),
+                  onTap: () {
+                    Navigator.pop(bottomSheetContext);
+                    _confirmRemove(member);
+                  },
+                ),
               ],
             ),
           ),
@@ -266,6 +275,44 @@ class _MemberManagementScreenState
     } catch (e) {
       if (mounted) {
         showErrorToast(context, 'Failed to $action member');
+      }
+    }
+  }
+
+  Future<void> _confirmRemove(ProfileDto member) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Remove member permanently?'),
+        content: Text(
+          'This will anonymize ${member.fullName}\'s profile to "Removed Member" and deactivate their account. This cannot be undone.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            style: FilledButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.error,
+            ),
+            child: const Text('Remove'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true || !mounted) return;
+
+    try {
+      await ref.read(memberManagementProvider.notifier).remove(member.id);
+      if (mounted) {
+        showSuccessToast(context, 'Member removed and anonymized');
+      }
+    } catch (e) {
+      if (mounted) {
+        showErrorToast(context, 'Failed to remove member');
       }
     }
   }

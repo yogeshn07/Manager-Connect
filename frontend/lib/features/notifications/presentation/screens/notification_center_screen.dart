@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:manager_connect/features/auth/presentation/providers/auth_notifier.dart';
 import 'package:manager_connect/features/notifications/data/models/notification_dto.dart';
 import 'package:manager_connect/features/notifications/presentation/providers/notification_provider.dart';
@@ -175,12 +176,32 @@ class _NotificationCenterScreenState
                 shape: BoxShape.circle,
               ),
             ),
-      onTap: () {
-        if (!item.isRead) {
-          ref.read(notificationProvider.notifier).markRead(item.id);
-        }
-      },
+      onTap: () => _onNotificationTap(item),
     );
+  }
+
+  void _onNotificationTap(NotificationItemDto item) {
+    if (!item.isRead) {
+      ref.read(notificationProvider.notifier).markRead(item.id);
+    }
+
+    final route = _resolveRoute(item.referenceType, item.referenceId);
+    if (route != null) {
+      context.push(route);
+    }
+  }
+
+  String? _resolveRoute(String? referenceType, String? referenceId) {
+    if (referenceType == null || referenceId == null) return null;
+
+    return switch (referenceType) {
+      'post' => '/feed/post/$referenceId',
+      'activity' => '/events/event/$referenceId',
+      'challenge' => '/growth/challenge/$referenceId',
+      'poll' => '/events/poll/$referenceId',
+      'recognition' => '/feed',
+      _ => null,
+    };
   }
 
   String _formatRelativeTime(DateTime dt) {

@@ -100,6 +100,11 @@ class MemberManagementNotifier extends _$MemberManagementNotifier {
     await _repo!.reactivateUser(userId);
     await load();
   }
+
+  Future<void> remove(String userId) async {
+    await _repo!.removeUser(userId);
+    await load();
+  }
 }
 
 class InvitationManagementState {

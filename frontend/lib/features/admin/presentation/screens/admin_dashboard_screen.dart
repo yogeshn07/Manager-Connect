@@ -2,9 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:manager_connect/core/constants/route_names.dart';
+import 'package:manager_connect/features/admin/data/repositories/admin_repository.dart';
 import 'package:manager_connect/features/admin/presentation/providers/admin_provider.dart';
+import 'package:manager_connect/shared/providers/supabase_provider.dart';
 import 'package:manager_connect/shared/widgets/error_state.dart';
 import 'package:manager_connect/shared/widgets/loading_state.dart';
+import 'package:manager_connect/shared/widgets/toast.dart';
+import 'package:manager_connect/core/errors/app_exception.dart';
 
 class AdminDashboardScreen extends ConsumerStatefulWidget {
   const AdminDashboardScreen({super.key});
@@ -162,11 +166,99 @@ class _AdminDashboardScreenState
         _NavigationTile(
           icon: Icons.calendar_today,
           title: 'Attendance',
-          subtitle: 'View attendance records',
+          subtitle: 'Record event attendance',
           onTap: () => context.push(RouteNames.adminAttendance),
+        ),
+        const SizedBox(height: 24),
+        Text('Quick Actions', style: Theme.of(context).textTheme.titleMedium),
+        const SizedBox(height: 12),
+        _NavigationTile(
+          icon: Icons.push_pin,
+          title: 'Pin Announcement',
+          subtitle: 'Pin a post to the top of the feed',
+          onTap: () => _showPinDialog(),
+        ),
+        _NavigationTile(
+          icon: Icons.push_pin_outlined,
+          title: 'Unpin Announcement',
+          subtitle: 'Remove the current pinned post',
+          onTap: () => _confirmUnpin(),
         ),
       ],
     );
+  }
+
+  Future<void> _showPinDialog() async {
+    final controller = TextEditingController();
+    final postId = await showDialog<String>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Pin Announcement'),
+        content: TextField(
+          controller: controller,
+          decoration: const InputDecoration(
+            labelText: 'Post ID',
+            hintText: 'Paste the post UUID to pin',
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, controller.text.trim()),
+            child: const Text('Pin'),
+          ),
+        ],
+      ),
+    );
+
+    if (postId == null || postId.isEmpty || !mounted) return;
+
+    try {
+      final client = ref.read(supabaseClientProvider);
+      final repo = AdminRepository(client);
+      await repo.pinPost(postId);
+      if (mounted) showSuccessToast(context, 'Post pinned to feed');
+    } on AppException catch (e) {
+      if (mounted) showErrorToast(context, e.message);
+    } catch (e) {
+      if (mounted) showErrorToast(context, 'Failed to pin post');
+    }
+  }
+
+  Future<void> _confirmUnpin() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Unpin announcement?'),
+        content: const Text('The current pinned post will be removed from the top of the feed.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Unpin'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true || !mounted) return;
+
+    try {
+      final client = ref.read(supabaseClientProvider);
+      final repo = AdminRepository(client);
+      await repo.unpinPost();
+      if (mounted) showSuccessToast(context, 'Announcement unpinned');
+    } on AppException catch (e) {
+      if (mounted) showErrorToast(context, e.message);
+    } catch (e) {
+      if (mounted) showErrorToast(context, 'Failed to unpin');
+    }
   }
 }
 
