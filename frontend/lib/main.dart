@@ -7,16 +7,39 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:manager_connect/app.dart';
 import 'package:manager_connect/core/config/env.dart';
+import 'package:manager_connect/core/config/firebase_config.dart';
+import 'package:manager_connect/shared/services/notification_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  if (!kIsWeb) {
+  // Firebase: initialize when config is provided via dart-define
+  if (FirebaseConfig.isConfigured) {
+    try {
+      await Firebase.initializeApp(
+        options: FirebaseOptions(
+          apiKey: FirebaseConfig.apiKey,
+          authDomain: FirebaseConfig.authDomain,
+          projectId: FirebaseConfig.projectId,
+          storageBucket: FirebaseConfig.storageBucket,
+          messagingSenderId: FirebaseConfig.messagingSenderId,
+          appId: FirebaseConfig.appId,
+        ),
+      );
+      log('Firebase initialized');
+    } catch (e) {
+      log('Firebase init failed: $e');
+    }
+  } else if (!kIsWeb) {
+    // Native platforms: try default config (google-services.json / GoogleService-Info.plist)
     try {
       await Firebase.initializeApp();
+      log('Firebase initialized (default config)');
     } catch (e) {
       log('Firebase init skipped: $e');
     }
+  } else {
+    log('Firebase skipped: no config provided via dart-define');
   }
 
   if (!Env.isConfigured) {
@@ -32,6 +55,13 @@ void main() async {
   } catch (e) {
     runApp(_ErrorApp(message: 'Supabase init failed: $e'));
     return;
+  }
+
+  // Notification service: initialize when Firebase is available
+  try {
+    await NotificationService.initialize();
+  } catch (e) {
+    log('Notification init skipped: $e');
   }
 
   ErrorWidget.builder = (FlutterErrorDetails details) {

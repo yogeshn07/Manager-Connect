@@ -1,6 +1,6 @@
 import 'dart:developer';
 
-import 'package:flutter/foundation.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:manager_connect/core/constants/supabase_constants.dart';
@@ -9,18 +9,25 @@ class NotificationService {
   NotificationService._();
 
   static Future<void> initialize() async {
-    if (kIsWeb) return;
+    // Skip if Firebase is not initialized
+    if (Firebase.apps.isEmpty) {
+      log('NotificationService: Firebase not initialized, skipping');
+      return;
+    }
 
-    final messaging = FirebaseMessaging.instance;
-    await messaging.requestPermission();
-
-    messaging.onTokenRefresh.listen(_onTokenRefresh);
-
-    FirebaseMessaging.onMessage.listen(_handleForegroundMessage);
+    try {
+      final messaging = FirebaseMessaging.instance;
+      await messaging.requestPermission();
+      messaging.onTokenRefresh.listen(_onTokenRefresh);
+      FirebaseMessaging.onMessage.listen(_handleForegroundMessage);
+      log('NotificationService: initialized');
+    } catch (e) {
+      log('NotificationService: init failed: $e');
+    }
   }
 
   static Future<void> registerToken(String userId) async {
-    if (kIsWeb) return;
+    if (Firebase.apps.isEmpty) return;
     try {
       final token = await FirebaseMessaging.instance.getToken();
       if (token == null) return;
@@ -28,6 +35,7 @@ class NotificationService {
       await Supabase.instance.client
           .from(Table.profiles)
           .update({'push_token': token}).eq('id', userId);
+      log('Push token registered');
     } catch (e) {
       log('Failed to register push token: $e');
     }
