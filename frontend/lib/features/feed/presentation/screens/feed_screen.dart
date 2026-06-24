@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:manager_connect/core/constants/route_names.dart';
-import 'package:manager_connect/core/theme/app_colors.dart';
+import 'package:manager_connect/core/constants/app_constants.dart';
+import 'package:manager_connect/features/feed/data/models/post_dto.dart';
 import 'package:manager_connect/features/feed/presentation/providers/feed_provider.dart';
-import 'package:manager_connect/features/feed/presentation/widgets/post_card.dart';
-import 'package:manager_connect/features/feed/presentation/widgets/feed_app_bar.dart';
-import 'package:manager_connect/features/feed/presentation/widgets/composer_card.dart';
-import 'package:manager_connect/features/feed/presentation/widgets/trending_header.dart';
 import 'package:manager_connect/features/feed/presentation/screens/create_post_screen.dart';
-import 'package:manager_connect/shared/widgets/error_state.dart';
-import 'package:manager_connect/shared/widgets/loading_state.dart';
+import 'package:manager_connect/shared/widgets/mc/mc_colors.dart';
+import 'package:manager_connect/shared/widgets/mc/mc_composer.dart';
+import 'package:manager_connect/shared/widgets/mc/mc_feed_post_card.dart';
+import 'package:manager_connect/shared/widgets/mc/mc_section_header.dart';
+import 'package:manager_connect/shared/widgets/mc/mc_top_bar.dart';
+import 'package:manager_connect/shared/widgets/mc/mc_typography.dart';
 
 class FeedScreen extends ConsumerStatefulWidget {
   const FeedScreen({super.key});
@@ -51,10 +51,19 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
     final feedState = ref.watch(feedProvider);
 
     return Scaffold(
-      backgroundColor: AppColors.surfaceLight,
-      appBar: FeedAppBar(
-        onNotificationTap: () => context.push(RouteNames.notifications),
-        onSearchTap: () {},
+      backgroundColor: McColors.bgApp,
+      appBar: McTopBarA(
+        actions: [
+          GestureDetector(
+            onTap: () {},
+            child: Icon(Icons.search, size: 20, color: McColors.textSecondary),
+          ),
+          const SizedBox(width: 14),
+          GestureDetector(
+            onTap: () => context.push('/notifications'),
+            child: Icon(Icons.notifications_outlined, size: 20, color: McColors.textSecondary),
+          ),
+        ],
       ),
       body: _buildBody(feedState),
     );
@@ -62,26 +71,38 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
 
   Widget _buildBody(FeedState feedState) {
     if (feedState.isLoading && feedState.posts.isEmpty) {
-      return const LoadingState(message: 'Loading your feed...');
-    }
-
-    if (feedState.error != null && feedState.posts.isEmpty) {
-      return ErrorState(
-        message: 'Failed to load feed',
-        onRetry: () => ref.read(feedProvider.notifier).loadFeed(),
+      return Center(
+        child: SizedBox(
+          width: 24, height: 24,
+          child: CircularProgressIndicator(strokeWidth: 2, color: McColors.brand800),
+        ),
       );
     }
 
-    if (!feedState.isLoading && feedState.posts.isEmpty) {
-      return _buildEmptyFeed();
+    if (feedState.error != null && feedState.posts.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.wifi_off, size: 32, color: McColors.textTertiary),
+            const SizedBox(height: 12),
+            Text('Failed to load feed', style: McTypography.body),
+            const SizedBox(height: 8),
+            GestureDetector(
+              onTap: () => ref.read(feedProvider.notifier).loadFeed(),
+              child: Text('Retry', style: McTypography.h4.copyWith(color: McColors.textLink)),
+            ),
+          ],
+        ),
+      );
     }
 
     return RefreshIndicator(
       onRefresh: () => ref.read(feedProvider.notifier).refresh(),
-      color: AppColors.brandPrimary,
+      color: McColors.brand800,
       child: ListView.builder(
         controller: _scrollController,
-        padding: const EdgeInsets.only(bottom: 80),
+        padding: const EdgeInsets.only(top: 4, bottom: 80),
         itemCount: _itemCount(feedState),
         itemBuilder: (context, index) => _buildItem(feedState, index),
       ),
@@ -89,8 +110,7 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
   }
 
   int _itemCount(FeedState feedState) {
-    // composer + trending header + pinned? + posts + loading?
-    int count = 2; // composer + trending header
+    int count = 2; // composer + section header
     if (feedState.pinnedPost != null) count++;
     count += feedState.posts.length;
     if (feedState.isLoadingMore) count++;
@@ -99,25 +119,27 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
 
   Widget _buildItem(FeedState feedState, int index) {
     if (index == 0) {
-      return ComposerCard(
-        onTap: () => _showCreatePost(context),
-        onRecognitionTap: () => context.go(RouteNames.growth),
-        onPollTap: () => context.go(RouteNames.events),
-        onEventTap: () => context.go(RouteNames.events),
+      return McComposer(
+        onTap: () => _showCreatePost(),
+        onRecognition: () => context.go('/growth'),
+        onPoll: () => context.go('/events'),
+        onEvent: () => context.go('/events'),
       );
     }
 
     if (index == 1) {
-      return const TrendingHeader();
+      return McSectionHeader(
+        label: 'Trending in your org',
+        icon: Icons.local_fire_department,
+        iconColor: McColors.coral600,
+        rightLabel: 'Recent',
+      );
     }
 
     int postStart = 2;
     if (feedState.pinnedPost != null) {
       if (index == 2) {
-        return PostCard(
-          post: feedState.pinnedPost!,
-          onTap: () => _openPostDetail(feedState.pinnedPost!.id),
-        );
+        return _postCard(feedState.pinnedPost!, isPinned: true);
       }
       postStart = 3;
     }
@@ -125,79 +147,77 @@ class _FeedScreenState extends ConsumerState<FeedScreen> {
     final postIndex = index - postStart;
     if (postIndex >= feedState.posts.length) {
       return Padding(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.all(20),
         child: Center(
           child: SizedBox(
-            width: 24,
-            height: 24,
-            child: CircularProgressIndicator(
-              strokeWidth: 2.5,
-              color: AppColors.brandPrimary,
-            ),
+            width: 20, height: 20,
+            child: CircularProgressIndicator(strokeWidth: 2, color: McColors.brand400),
           ),
         ),
       );
     }
 
-    final post = feedState.posts[postIndex];
-    return PostCard(
-      post: post,
-      onTap: () => _openPostDetail(post.id),
+    return _postCard(feedState.posts[postIndex]);
+  }
+
+  Widget _postCard(PostDto post, {bool isPinned = false}) {
+    final name = post.author?.fullName ?? 'Unknown';
+    final initials = name.isNotEmpty ? name[0].toUpperCase() : '?';
+    final isCB = post.author?.isSystemAccount == true ||
+        post.authorId == AppConstants.connectBuddySystemAccountId;
+
+    Color? avatarColor;
+    String? pillText;
+    Color? pillFill;
+    Color? pillTextColor;
+    Color? bannerBg;
+    IconData? bannerIcon;
+    String? bannerLabel;
+
+    if (isCB) {
+      avatarColor = McColors.purple600;
+      pillText = 'Announcement';
+      pillFill = McColors.brand50;
+      pillTextColor = McColors.brand800;
+    }
+
+    if (isPinned) {
+      bannerBg = McColors.brand800;
+      bannerIcon = Icons.push_pin;
+      bannerLabel = 'Pinned announcement';
+    }
+
+    return McFeedPostCard(
+      authorName: name,
+      authorInitials: initials,
+      authorRole: isCB ? 'Community Bot' : 'Manager',
+      timestamp: _formatTime(post.createdAt),
+      body: post.content,
+      avatarColor: avatarColor,
+      typePill: pillText,
+      typePillFill: pillFill,
+      typePillText: pillTextColor,
+      bannerColor: bannerBg,
+      bannerIcon: bannerIcon,
+      bannerLabel: bannerLabel,
+      isConnectBuddy: isCB,
+      isPinned: isPinned,
+      onTap: () => context.push('/feed/post/${post.id}'),
+      onReact: () {},
+      onComment: () => context.push('/feed/post/${post.id}'),
     );
   }
 
-  Widget _buildEmptyFeed() {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 80,
-              height: 80,
-              decoration: BoxDecoration(
-                color: AppColors.brandLight,
-                shape: BoxShape.circle,
-              ),
-              child: Icon(Icons.forum_outlined, size: 40, color: AppColors.brandPrimary),
-            ),
-            const SizedBox(height: 24),
-            Text(
-              'Welcome to Manager Connect',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w700,
-                color: AppColors.textPrimary,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Be the first to share an update with\nyour leadership community',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 14,
-                color: AppColors.textSecondary,
-                height: 1.5,
-              ),
-            ),
-            const SizedBox(height: 24),
-            FilledButton.icon(
-              onPressed: () => _showCreatePost(context),
-              icon: const Icon(Icons.edit, size: 18),
-              label: const Text('Share Update'),
-            ),
-          ],
-        ),
-      ),
-    );
+  String _formatTime(DateTime dt) {
+    final diff = DateTime.now().difference(dt);
+    if (diff.inMinutes < 1) return 'Just now';
+    if (diff.inMinutes < 60) return '${diff.inMinutes}m';
+    if (diff.inHours < 24) return '${diff.inHours}h';
+    if (diff.inDays < 7) return '${diff.inDays}d';
+    return '${dt.day}/${dt.month}/${dt.year}';
   }
 
-  void _openPostDetail(String postId) {
-    context.push('/feed/post/$postId');
-  }
-
-  void _showCreatePost(BuildContext context) {
+  void _showCreatePost() {
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,

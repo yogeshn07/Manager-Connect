@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:manager_connect/core/constants/route_names.dart';
+import 'package:manager_connect/shared/widgets/mc/mc_bottom_nav.dart';
 
 class MainScaffold extends StatelessWidget {
   const MainScaffold({required this.child, super.key});
@@ -11,7 +12,7 @@ class MainScaffold extends StatelessWidget {
     RouteNames.feed,
     RouteNames.events,
     RouteNames.growth,
-    RouteNames.analytics,
+    '/notifications',
     RouteNames.profile,
   ];
 
@@ -31,36 +32,9 @@ class MainScaffold extends StatelessWidget {
 
     return Scaffold(
       body: child,
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: currentIndex,
-        onDestinationSelected: (index) => _onTabTap(context, index),
-        destinations: const [
-          NavigationDestination(
-            icon: Icon(Icons.feed_outlined),
-            selectedIcon: Icon(Icons.feed),
-            label: 'Feed',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.event_outlined),
-            selectedIcon: Icon(Icons.event),
-            label: 'Events',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.trending_up_outlined),
-            selectedIcon: Icon(Icons.trending_up),
-            label: 'Growth',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.analytics_outlined),
-            selectedIcon: Icon(Icons.analytics),
-            label: 'Analytics',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.person_outline),
-            selectedIcon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
+      bottomNavigationBar: McBottomNav(
+        currentIndex: currentIndex,
+        onTap: (i) => _onTabTap(context, i),
       ),
     );
   }
