@@ -1,0 +1,97 @@
+<!-- @dsCard group="Design Tokens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spacing, Radius & Elevation</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: Inter, system-ui, sans-serif; background: #F4F5F7; padding: 16px; }
+  h1 { font-size: 18px; font-weight: 500; color: #2C2C2A; margin-bottom: 16px; }
+  h2 { font-size: 13px; font-weight: 500; color: #5F5E5A; text-transform: uppercase; letter-spacing: 0.07em; margin: 16px 0 8px; }
+  .card { background: #fff; border: 0.5px solid rgba(0,0,0,0.10); border-radius: 13px; padding: 14px; margin-bottom: 8px; }
+  .row { display: flex; gap: 8px; align-items: center; margin-bottom: 6px; }
+  .box { background: #E6F1FB; border: 1px solid #85B7EB; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 500; color: #0C447C; }
+  .label { font-size: 11px; font-weight: 500; color: #2C2C2A; }
+  .meta { font-size: 10px; color: #888780; }
+  .alert { background: #FCEBEB; border: 0.5px solid #F09595; border-radius: 10px; padding: 10px 14px; margin-top: 12px; }
+  .alert p { font-size: 11px; color: #791F1F; line-height: 1.5; }
+  .alert strong { font-weight: 500; }
+</style>
+</head>
+<body>
+<h1>Spacing, Radius & Elevation</h1>
+
+<h2>Spacing Scale (4px base)</h2>
+<div class="card">
+  <div class="row"><div class="box" style="width:4px;height:20px"></div><span class="label">space-1: 4px</span><span class="meta">Micro gaps, icon-to-text</span></div>
+  <div class="row"><div class="box" style="width:8px;height:20px"></div><span class="label">space-2: 8px</span><span class="meta">Internal component gaps</span></div>
+  <div class="row"><div class="box" style="width:12px;height:20px"></div><span class="label">space-3: 12px</span><span class="meta">Card internal sections</span></div>
+  <div class="row"><div class="box" style="width:16px;height:20px"></div><span class="label">space-4: 14-16px</span><span class="meta">Card padding horizontal</span></div>
+  <div class="row"><div class="box" style="width:20px;height:20px"></div><span class="label">space-5: 20px</span><span class="meta">Between cards</span></div>
+  <div class="row"><div class="box" style="width:24px;height:20px"></div><span class="label">space-6: 24px</span><span class="meta">Section-to-section</span></div>
+  <div class="row"><div class="box" style="width:32px;height:20px"></div><span class="label">space-7: 28-32px</span><span class="meta">Major section breaks</span></div>
+</div>
+
+<h2>Corner Radius</h2>
+<div class="card">
+  <div style="display:flex; gap:12px; flex-wrap:wrap; align-items:flex-end">
+    <div style="text-align:center">
+      <div style="width:60px;height:40px;background:#E6F1FB;border:1px solid #85B7EB;border-radius:14px"></div>
+      <div class="meta" style="margin-top:4px">Cards 13-14px</div>
+    </div>
+    <div style="text-align:center">
+      <div style="width:60px;height:40px;background:#E6F1FB;border:1px solid #85B7EB;border-radius:16px"></div>
+      <div class="meta" style="margin-top:4px">Featured 16px</div>
+    </div>
+    <div style="text-align:center">
+      <div style="width:60px;height:30px;background:#0C447C;border-radius:21px"></div>
+      <div class="meta" style="margin-top:4px">Buttons 20-22px</div>
+    </div>
+    <div style="text-align:center">
+      <div style="width:32px;height:32px;background:#E6F1FB;border:1px solid #85B7EB;border-radius:50%"></div>
+      <div class="meta" style="margin-top:4px">Avatars 50%</div>
+    </div>
+    <div style="text-align:center">
+      <div style="width:60px;height:28px;background:#E6F1FB;border:1px solid #85B7EB;border-radius:17px"></div>
+      <div class="meta" style="margin-top:4px">Chips 14-20px</div>
+    </div>
+    <div style="text-align:center">
+      <div style="width:60px;height:28px;background:#F4F5F7;border:0.5px solid rgba(0,0,0,0.10);border-radius:20px"></div>
+      <div class="meta" style="margin-top:4px">Inputs 18-22px</div>
+    </div>
+  </div>
+</div>
+
+<h2>Elevation — Zero Shadows</h2>
+<div class="card">
+  <div style="display:flex; gap:8px; flex-direction:column">
+    <div style="display:flex;gap:8px;align-items:center">
+      <div style="width:48px;height:32px;background:#F4F5F7;border-radius:6px"></div>
+      <div><span class="label">Level 0 — Page</span><span class="meta" style="margin-left:8px">#F4F5F7 background</span></div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <div style="width:48px;height:32px;background:#fff;border:0.5px solid rgba(0,0,0,0.10);border-radius:6px"></div>
+      <div><span class="label">Level 1 — Card</span><span class="meta" style="margin-left:8px">White + 0.5px border</span></div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <div style="width:48px;height:32px;background:#fff;border:0.5px solid #85B7EB;border-radius:6px"></div>
+      <div><span class="label">Level 2 — Accented</span><span class="meta" style="margin-left:8px">Category-colored border</span></div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <div style="width:48px;height:32px;background:#FFFBF4;border:1px solid #EF9F27;border-radius:6px"></div>
+      <div><span class="label">Level 3 — Celebration</span><span class="meta" style="margin-left:8px">#FFFBF4 + amber border</span></div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <div style="width:48px;height:32px;background:#0C447C;border-radius:6px"></div>
+      <div><span class="label">Hero</span><span class="meta" style="margin-left:8px">Solid brand color, full-width</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="alert">
+  <p><strong>NEVER add box-shadow to any element.</strong> All depth is achieved through background contrast, border presence, and color differentiation. No gradients on surfaces either.</p>
+</div>
+</body>
+</html>

@@ -25,9 +25,18 @@ abstract final class Table {
   static const String flaggedContent = 'flagged_content';
   static const String pinnedAnnouncements = 'pinned_announcements';
   static const String adminAuditLog = 'admin_audit_log';
+  static const String savedPosts = 'saved_posts';
+  static const String statuses = 'statuses';
+
+  // Catalyst Insights pipeline tables
+  static const String insightsSources = 'insights_sources';
+  static const String insightsRaw = 'insights_raw';
+  static const String catalystInsights = 'catalyst_insights';
 }
 
 abstract final class Bucket {
   static const String avatars = 'avatars';
   static const String postImages = 'post-images';
+  static const String statuses = 'statuses';
+  static const String insights = 'insights';
 }

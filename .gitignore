@@ -1,16 +1,31 @@
-# Database backups (regenerated from migrations via supabase db dump)
-backups/
-
-# Environment files
+# ── Secrets & environment ────────────────────────────────────────────────
 .env
 .env.local
 .env.*.local
+# Local build-time config for --dart-define-from-file (see frontend/env.example.json)
+frontend/env.json
 
-# IDE
+# ── Database backups (regenerated via supabase db dump) ──────────────────
+backups/
+
+# ── Node dependencies (not a Node project at root; installed by tooling) ─
+node_modules/
+package.json
+package-lock.json
+
+# ── Separate repositories (must not be embedded here) ────────────────────
+# manager-connect-ui lives at github.com/yogeshn07/manager-connect-ui
+manager-connect-ui/
+
+# ── Agent tooling: worktrees and vendored skills are local-only ──────────
+.claude/worktrees/
+.claude/skills/
+
+# ── IDE ──────────────────────────────────────────────────────────────────
 .idea/
 *.iml
 .vscode/settings.json
 
-# OS
+# ── OS ───────────────────────────────────────────────────────────────────
 .DS_Store
 Thumbs.db

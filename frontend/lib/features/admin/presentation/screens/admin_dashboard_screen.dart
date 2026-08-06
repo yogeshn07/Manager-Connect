@@ -7,6 +7,9 @@ import 'package:manager_connect/features/admin/presentation/providers/admin_prov
 import 'package:manager_connect/shared/providers/supabase_provider.dart';
 import 'package:manager_connect/shared/widgets/error_state.dart';
 import 'package:manager_connect/shared/widgets/loading_state.dart';
+import 'package:manager_connect/shared/widgets/mc/mc_colors.dart';
+import 'package:manager_connect/shared/widgets/mc/mc_spacing.dart';
+import 'package:manager_connect/shared/widgets/mc/mc_typography.dart';
 import 'package:manager_connect/shared/widgets/toast.dart';
 import 'package:manager_connect/core/errors/app_exception.dart';
 
@@ -18,8 +21,7 @@ class AdminDashboardScreen extends ConsumerStatefulWidget {
       _AdminDashboardScreenState();
 }
 
-class _AdminDashboardScreenState
-    extends ConsumerState<AdminDashboardScreen> {
+class _AdminDashboardScreenState extends ConsumerState<AdminDashboardScreen> {
   @override
   void initState() {
     super.initState();
@@ -33,10 +35,43 @@ class _AdminDashboardScreenState
     final state = ref.watch(adminDashboardProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Admin'),
+      backgroundColor: MCColors.background,
+      body: SafeArea(
+        child: Column(
+          children: [
+            _buildTopBar(),
+            Expanded(child: _buildBody(state)),
+          ],
+        ),
       ),
-      body: _buildBody(state),
+    );
+  }
+
+  Widget _buildTopBar() {
+    return Container(
+      color: MCColors.card,
+      padding: const EdgeInsets.symmetric(
+        horizontal: MCSpacing.pageH,
+        vertical: 14,
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text('Admin', style: MCTypography.h3),
+          ),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            decoration: BoxDecoration(
+              color: MCColors.errorBg,
+              borderRadius: BorderRadius.circular(MCSpacing.radiusPill),
+            ),
+            child: Text(
+              'Admin',
+              style: MCTypography.pill.copyWith(color: MCColors.error),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -55,135 +90,186 @@ class _AdminDashboardScreenState
     return RefreshIndicator(
       onRefresh: () => ref.read(adminDashboardProvider.notifier).load(),
       child: ListView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.fromLTRB(
+          MCSpacing.pageH,
+          MCSpacing.sm,
+          MCSpacing.pageH,
+          MCSpacing.xl,
+        ),
         children: [
-          _buildStatsSection(state.counts),
-          const SizedBox(height: 24),
-          _buildNavigationSection(),
+          _buildStatsGrid(state.counts),
+          const SizedBox(height: MCSpacing.xl),
+          _buildSectionLabel('QUICK ACTIONS'),
+          const SizedBox(height: MCSpacing.sm),
+          _buildQuickActionsCard(),
         ],
       ),
     );
   }
 
-  Widget _buildStatsSection(Map<String, int> counts) {
-    final theme = Theme.of(context);
+  Widget _buildStatsGrid(Map<String, int> counts) {
+    final stats = <_StatItem>[
+      _StatItem(
+        icon: Icons.people_rounded,
+        iconColor: MCColors.primaryMid,
+        iconBg: MCColors.primaryPale,
+        label: 'Total Members',
+        value: '${counts['total_members'] ?? 0}',
+      ),
+      _StatItem(
+        icon: Icons.mail_outline_rounded,
+        iconColor: MCColors.amberDark,
+        iconBg: MCColors.amberLight,
+        label: 'Pending Invitations',
+        value: '${counts['pending_invitations'] ?? 0}',
+      ),
+      _StatItem(
+        icon: Icons.flag_outlined,
+        iconColor: MCColors.error,
+        iconBg: MCColors.errorBg,
+        label: 'Flagged Content',
+        value: '${counts['pending_flags'] ?? 0}',
+      ),
+      _StatItem(
+        icon: Icons.fitness_center_rounded,
+        iconColor: MCColors.success,
+        iconBg: MCColors.successBg,
+        label: 'Active Challenges',
+        value: '${counts['total_challenges'] ?? 0}',
+      ),
+    ];
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text('Overview', style: theme.textTheme.titleMedium),
-        const SizedBox(height: 12),
-        Row(
-          children: [
-            Expanded(
-              child: _StatCard(
-                icon: Icons.people,
-                label: 'Active Members',
-                value: '${counts['active_members'] ?? 0}'
-                    ' / ${counts['total_members'] ?? 0}',
-              ),
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: _StatCard(
-                icon: Icons.mail_outline,
-                label: 'Pending Invitations',
-                value: '${counts['pending_invitations'] ?? 0}',
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        Row(
-          children: [
-            Expanded(
-              child: _StatCard(
-                icon: Icons.flag_outlined,
-                label: 'Pending Flags',
-                value: '${counts['pending_flags'] ?? 0}',
-              ),
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: _StatCard(
-                icon: Icons.article_outlined,
-                label: 'Total Posts',
-                value: '${counts['total_posts'] ?? 0}',
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        Row(
-          children: [
-            Expanded(
-              child: _StatCard(
-                icon: Icons.event,
-                label: 'Total Activities',
-                value: '${counts['total_activities'] ?? 0}',
-              ),
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: _StatCard(
-                icon: Icons.fitness_center,
-                label: 'Total Challenges',
-                value: '${counts['total_challenges'] ?? 0}',
-              ),
-            ),
-          ],
-        ),
-      ],
+    return GridView.count(
+      crossAxisCount: 2,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      mainAxisSpacing: MCSpacing.sm,
+      crossAxisSpacing: MCSpacing.sm,
+      childAspectRatio: 1.5,
+      children: stats.map((s) => _StatCard(item: s)).toList(),
     );
   }
 
-  Widget _buildNavigationSection() {
-    final theme = Theme.of(context);
+  Widget _buildSectionLabel(String label) {
+    return Text(
+      label,
+      style: MCTypography.overline.copyWith(
+        letterSpacing: 0.1,
+        color: MCColors.textMuted,
+      ),
+    );
+  }
 
+  Widget _buildQuickActionsCard() {
+    final tiles = <_TileData>[
+      _TileData(
+        icon: Icons.people_rounded,
+        iconColor: MCColors.primaryMid,
+        iconBg: MCColors.primaryPale,
+        label: 'Members',
+        onTap: () => context.push(RouteNames.adminMembers),
+      ),
+      _TileData(
+        icon: Icons.mail_outline_rounded,
+        iconColor: MCColors.amberDark,
+        iconBg: MCColors.amberLight,
+        label: 'Invitations',
+        onTap: () => context.push('/admin/invitations'),
+      ),
+      _TileData(
+        icon: Icons.flag_outlined,
+        iconColor: MCColors.error,
+        iconBg: MCColors.errorBg,
+        label: 'Flagged Content',
+        onTap: () => context.push(RouteNames.adminFlagged),
+      ),
+      _TileData(
+        icon: Icons.calendar_today_rounded,
+        iconColor: MCColors.primaryLight,
+        iconBg: MCColors.primaryPale,
+        label: 'Attendance',
+        onTap: () => context.push(RouteNames.adminAttendance),
+      ),
+      _TileData(
+        icon: Icons.push_pin_rounded,
+        iconColor: MCColors.success,
+        iconBg: MCColors.successBg,
+        label: 'Post Announcement',
+        onTap: _showPinDialog,
+      ),
+      _TileData(
+        icon: Icons.rate_review_rounded,
+        iconColor: MCColors.violet,
+        iconBg: MCColors.violetLight,
+        label: 'Insight Review',
+        onTap: () => context.push(RouteNames.adminInsightReview),
+      ),
+      _TileData(
+        icon: Icons.monitor_heart_rounded,
+        iconColor: MCColors.success,
+        iconBg: MCColors.successBg,
+        label: 'Pipeline Health',
+        onTap: () => context.push(RouteNames.adminInsightPipeline),
+        isLast: true,
+      ),
+    ];
+
+    return Container(
+      decoration: BoxDecoration(
+        color: MCColors.card,
+        borderRadius: BorderRadius.circular(MCSpacing.radiusMd),
+        boxShadow: MCColors.cardShadow,
+      ),
+      clipBehavior: Clip.hardEdge,
+      child: Column(
+        children: tiles.map(_buildTileRow).toList(),
+      ),
+    );
+  }
+
+  Widget _buildTileRow(_TileData tile) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
       children: [
-        Text('Manage', style: theme.textTheme.titleMedium),
-        const SizedBox(height: 12),
-        _NavigationTile(
-          icon: Icons.people,
-          title: 'Members',
-          subtitle: 'View and manage all members',
-          onTap: () => context.push(RouteNames.adminMembers),
+        InkWell(
+          onTap: tile.onTap,
+          child: SizedBox(
+            height: 52,
+            child: Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: MCSpacing.pageH),
+              child: Row(
+                children: [
+                  Container(
+                    width: 36,
+                    height: 36,
+                    decoration: BoxDecoration(
+                      color: tile.iconBg,
+                      borderRadius:
+                          BorderRadius.circular(MCSpacing.radiusXs + 2),
+                    ),
+                    child: Icon(tile.icon, size: 18, color: tile.iconColor),
+                  ),
+                  const SizedBox(width: MCSpacing.sm),
+                  Expanded(
+                    child: Text(tile.label, style: MCTypography.label),
+                  ),
+                  const Icon(
+                    Icons.chevron_right_rounded,
+                    size: 20,
+                    color: MCColors.textMuted,
+                  ),
+                ],
+              ),
+            ),
+          ),
         ),
-        _NavigationTile(
-          icon: Icons.mail_outline,
-          title: 'Invitations',
-          subtitle: 'Send and manage invitations',
-          onTap: () => context.push('/admin/invitations'),
-        ),
-        _NavigationTile(
-          icon: Icons.flag_outlined,
-          title: 'Moderation',
-          subtitle: 'Review flagged content',
-          onTap: () => context.push(RouteNames.adminFlagged),
-        ),
-        _NavigationTile(
-          icon: Icons.calendar_today,
-          title: 'Attendance',
-          subtitle: 'Record event attendance',
-          onTap: () => context.push(RouteNames.adminAttendance),
-        ),
-        const SizedBox(height: 24),
-        Text('Quick Actions', style: Theme.of(context).textTheme.titleMedium),
-        const SizedBox(height: 12),
-        _NavigationTile(
-          icon: Icons.push_pin,
-          title: 'Pin Announcement',
-          subtitle: 'Pin a post to the top of the feed',
-          onTap: () => _showPinDialog(),
-        ),
-        _NavigationTile(
-          icon: Icons.push_pin_outlined,
-          title: 'Unpin Announcement',
-          subtitle: 'Remove the current pinned post',
-          onTap: () => _confirmUnpin(),
-        ),
+        if (!tile.isLast)
+          const Divider(
+            height: 1,
+            thickness: 1,
+            color: MCColors.borderLight,
+          ),
       ],
     );
   }
@@ -228,12 +314,15 @@ class _AdminDashboardScreenState
     }
   }
 
+  // ignore: unused_element
   Future<void> _confirmUnpin() async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text('Unpin announcement?'),
-        content: const Text('The current pinned post will be removed from the top of the feed.'),
+        content: const Text(
+          'The current pinned post will be removed from the top of the feed.',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
@@ -262,82 +351,81 @@ class _AdminDashboardScreenState
   }
 }
 
-class _StatCard extends StatelessWidget {
-  const _StatCard({
+class _StatItem {
+  const _StatItem({
     required this.icon,
+    required this.iconColor,
+    required this.iconBg,
     required this.label,
     required this.value,
   });
 
   final IconData icon;
+  final Color iconColor;
+  final Color iconBg;
   final String label;
   final String value;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          children: [
-            Icon(icon, size: 28, color: theme.colorScheme.primary),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    value,
-                    style: theme.textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Text(
-                    label,
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 }
 
-class _NavigationTile extends StatelessWidget {
-  const _NavigationTile({
+class _TileData {
+  const _TileData({
     required this.icon,
-    required this.title,
-    required this.subtitle,
+    required this.iconColor,
+    required this.iconBg,
+    required this.label,
     required this.onTap,
+    this.isLast = false,
   });
 
   final IconData icon;
-  final String title;
-  final String subtitle;
+  final Color iconColor;
+  final Color iconBg;
+  final String label;
   final VoidCallback onTap;
+  final bool isLast;
+}
+
+class _StatCard extends StatelessWidget {
+  const _StatCard({required this.item});
+
+  final _StatItem item;
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return Card(
-      margin: const EdgeInsets.only(bottom: 8),
-      child: ListTile(
-        leading: CircleAvatar(
-          backgroundColor: theme.colorScheme.primaryContainer,
-          child: Icon(icon, color: theme.colorScheme.primary),
-        ),
-        title: Text(title),
-        subtitle: Text(subtitle),
-        trailing: const Icon(Icons.chevron_right),
-        onTap: onTap,
+    return Container(
+      decoration: BoxDecoration(
+        color: MCColors.card,
+        borderRadius: BorderRadius.circular(MCSpacing.radiusMd),
+        boxShadow: MCColors.cardShadow,
+      ),
+      padding: const EdgeInsets.all(MCSpacing.md),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: item.iconBg,
+              borderRadius: BorderRadius.circular(MCSpacing.radiusSm),
+            ),
+            child: Icon(item.icon, size: 20, color: item.iconColor),
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(item.value, style: MCTypography.kpi),
+              const SizedBox(height: 2),
+              Text(
+                item.label,
+                style: MCTypography.caption,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

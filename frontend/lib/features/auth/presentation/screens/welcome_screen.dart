@@ -6,8 +6,13 @@ import 'package:go_router/go_router.dart';
 import 'package:manager_connect/core/constants/route_names.dart';
 import 'package:manager_connect/core/errors/app_exception.dart';
 import 'package:manager_connect/features/auth/data/repositories/auth_repository.dart';
-import 'package:manager_connect/features/auth/presentation/providers/auth_notifier.dart';
 import 'package:manager_connect/shared/providers/supabase_provider.dart';
+import 'package:manager_connect/shared/widgets/mc/mc_buttons.dart';
+import 'package:manager_connect/shared/widgets/mc/mc_colors.dart';
+import 'package:manager_connect/shared/widgets/mc/mc_grid_identity.dart';
+import 'package:manager_connect/shared/widgets/mc/mc_inputs.dart';
+import 'package:manager_connect/shared/widgets/mc/mc_spacing.dart';
+import 'package:manager_connect/shared/widgets/mc/mc_typography.dart';
 import 'package:manager_connect/shared/widgets/toast.dart';
 
 class WelcomeScreen extends ConsumerStatefulWidget {
@@ -19,54 +24,12 @@ class WelcomeScreen extends ConsumerStatefulWidget {
 
 class _WelcomeScreenState extends ConsumerState<WelcomeScreen> {
   final _emailController = TextEditingController();
-  final _tokenController = TextEditingController();
-  bool _showInviteField = false;
   bool _sendingOtp = false;
-  bool _validatingToken = false;
-  String? _inviteeEmail;
 
   @override
   void dispose() {
     _emailController.dispose();
-    _tokenController.dispose();
     super.dispose();
-  }
-
-  Future<void> _validateToken() async {
-    final token = _tokenController.text.trim();
-    if (token.isEmpty) return;
-
-    setState(() => _validatingToken = true);
-    try {
-      final client = ref.read(supabaseClientProvider);
-      final repo = AuthRepository(client);
-      final result = await repo.validateInviteToken(token);
-
-      final email = result['invitee_email'] as String?;
-      final phone = result['invitee_phone'] as String?;
-
-      ref.read(authProvider.notifier).setInviteToken(token);
-
-      setState(() {
-        _inviteeEmail = email ?? phone;
-        if (email != null && email.isNotEmpty) {
-          _emailController.text = email;
-        }
-      });
-
-      if (mounted) {
-        showSuccessToast(
-          context,
-          'Invitation verified for ${result['invitee_name']}',
-        );
-      }
-    } on AppException catch (e) {
-      if (mounted) showErrorToast(context, e.message);
-    } catch (e) {
-      if (mounted) showErrorToast(context, 'Failed to validate invitation');
-    } finally {
-      if (mounted) setState(() => _validatingToken = false);
-    }
   }
 
   Future<void> _sendOtp() async {
@@ -75,19 +38,17 @@ class _WelcomeScreenState extends ConsumerState<WelcomeScreen> {
       showErrorToast(context, 'Please enter your email');
       return;
     }
-
     setState(() => _sendingOtp = true);
     try {
       final client = ref.read(supabaseClientProvider);
       final repo = AuthRepository(client);
       await repo.sendOtp(email: email);
-
       if (mounted) {
         unawaited(context.push(RouteNames.verifyOtp, extra: email));
       }
     } on AppException catch (e) {
       if (mounted) showErrorToast(context, e.message);
-    } catch (e) {
+    } catch (_) {
       if (mounted) showErrorToast(context, 'Failed to send OTP');
     } finally {
       if (mounted) setState(() => _sendingOtp = false);
@@ -96,112 +57,192 @@ class _WelcomeScreenState extends ConsumerState<WelcomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final screenH = MediaQuery.of(context).size.height;
+
     return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const SizedBox(height: 60),
-              Icon(
-                Icons.people_alt_rounded,
-                size: 80,
-                color: Theme.of(context).colorScheme.primary,
+      backgroundColor: MCColors.background,
+      body: Column(
+        children: [
+          // ── Hero navy panel ────────────────────────────────────────
+          Container(
+            height: screenH * 0.38,
+            width: double.infinity,
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: MCColors.splashGradient,
               ),
-              const SizedBox(height: 24),
-              Text(
-                'Manager Connect',
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.headlineMedium,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'Your private manager community',
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    ),
-              ),
-              const SizedBox(height: 48),
-              if (_showInviteField) ...[
-                TextField(
-                  controller: _tokenController,
-                  decoration: InputDecoration(
-                    labelText: 'Invitation Code',
-                    hintText: 'Paste your invitation code',
-                    border: const OutlineInputBorder(),
-                    suffixIcon: _validatingToken
-                        ? const Padding(
-                            padding: EdgeInsets.all(12),
-                            child: SizedBox(
-                              width: 20,
-                              height: 20,
-                              child: CircularProgressIndicator(strokeWidth: 2),
+            ),
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                const MCGridOverlay(),
+                SafeArea(
+                  child: Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        _CompactLogo(),
+                        const SizedBox(height: 20),
+                        Text('The Catalysts', style: MCTypography.displayMd),
+                        const SizedBox(height: 6),
+                        Text('Built for leaders', style: MCTypography.taglineDark),
+                        const SizedBox(height: 8),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Container(
+                              width: 3,
+                              height: 3,
+                              decoration: const BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: MCColors.energyRed,
+                              ),
                             ),
-                          )
-                        : IconButton(
-                            icon: const Icon(Icons.check_circle_outline),
-                            onPressed: _validateToken,
-                          ),
-                  ),
-                  enabled: !_validatingToken,
-                  onSubmitted: (_) => _validateToken(),
-                ),
-                const SizedBox(height: 16),
-              ],
-              TextField(
-                controller: _emailController,
-                decoration: const InputDecoration(
-                  labelText: 'Email',
-                  hintText: 'Enter your email address',
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.email_outlined),
-                ),
-                keyboardType: TextInputType.emailAddress,
-                textInputAction: TextInputAction.done,
-                enabled: !_sendingOtp,
-                onSubmitted: (_) => _sendOtp(),
-              ),
-              const SizedBox(height: 24),
-              SizedBox(
-                height: 48,
-                child: FilledButton(
-                  onPressed: _sendingOtp ? null : _sendOtp,
-                  child: _sendingOtp
-                      ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: Colors.white,
-                          ),
-                        )
-                      : const Text('Send OTP'),
-                ),
-              ),
-              const SizedBox(height: 16),
-              if (!_showInviteField)
-                TextButton(
-                  onPressed: () =>
-                      setState(() => _showInviteField = true),
-                  child: const Text('I have an invitation code'),
-                ),
-              if (_inviteeEmail != null)
-                Padding(
-                  padding: const EdgeInsets.only(top: 8),
-                  child: Text(
-                    'Invitation verified',
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Theme.of(context).colorScheme.primary,
+                            const SizedBox(width: 5),
+                            Text(
+                              'GI LEADERS NETWORK',
+                              style: MCTypography.taglineDark.copyWith(
+                                fontSize: 9,
+                                letterSpacing: 1.5,
+                                color: Colors.white.withValues(alpha: 0.38),
+                              ),
+                            ),
+                          ],
                         ),
+                      ],
+                    ),
                   ),
                 ),
-            ],
+              ],
+            ),
           ),
-        ),
+
+          // ── White bottom sheet ────────────────────────────────────
+          Expanded(
+            child: Container(
+              decoration: const BoxDecoration(
+                color: MCColors.card,
+                borderRadius: BorderRadius.vertical(
+                  top: Radius.circular(MCSpacing.radiusXl),
+                ),
+              ),
+              margin: const EdgeInsets.only(top: -24),
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(
+                  MCSpacing.pageH, MCSpacing.xl, MCSpacing.pageH, MCSpacing.xl4,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // Drag handle
+                    Center(
+                      child: Container(
+                        width: 36,
+                        height: 4,
+                        margin: const EdgeInsets.only(bottom: 24),
+                        decoration: BoxDecoration(
+                          color: MCColors.border,
+                          borderRadius: BorderRadius.circular(999),
+                        ),
+                      ),
+                    ),
+
+                    Text('Sign in', style: MCTypography.h1),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Your private manager community',
+                      style: MCTypography.body.copyWith(color: MCColors.textSecondary),
+                    ),
+                    const SizedBox(height: MCSpacing.xl),
+
+                    // Email
+                    MCInput(
+                      controller: _emailController,
+                      hint: 'Enter your email address',
+                      label: 'Work Email',
+                      prefixIcon: Icons.email_outlined,
+                      keyboardType: TextInputType.emailAddress,
+                      textInputAction: TextInputAction.done,
+                      enabled: !_sendingOtp,
+                      onSubmitted: (_) => _sendOtp(),
+                    ),
+                    const SizedBox(height: 20),
+
+                    // CTA
+                    MCPrimaryButton(
+                      label: 'Continue with Email',
+                      loading: _sendingOtp,
+                      icon: Icons.arrow_forward,
+                      onPressed: _sendOtp,
+                    ),
+                    const SizedBox(height: 12),
+
+                    // Microsoft SSO ghost
+                    MCGhostButton(
+                      label: 'Continue with Microsoft',
+                      icon: Icons.corporate_fare,
+                      onPressed: () {},
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
+}
+
+class _CompactLogo extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 72,
+      height: 72,
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.18), width: 1.5),
+      ),
+      child: CustomPaint(painter: _MiniLogoPainter()),
+    );
+  }
+}
+
+class _MiniLogoPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final cx = size.width / 2;
+    final cy = size.height / 2;
+
+    final mPaint = Paint()
+      ..color = Colors.white
+      ..strokeWidth = 2.8
+      ..strokeCap = StrokeCap.round
+      ..strokeJoin = StrokeJoin.round
+      ..style = PaintingStyle.stroke;
+
+    final mPath = Path()
+      ..moveTo(cx - 16, cy + 10)
+      ..lineTo(cx - 16, cy - 10)
+      ..lineTo(cx,      cy + 6)
+      ..lineTo(cx + 16, cy - 10)
+      ..lineTo(cx + 16, cy + 10);
+    canvas.drawPath(mPath, mPaint);
+
+    final cPaint = Paint()
+      ..color = MCColors.amber
+      ..strokeWidth = 2.8
+      ..strokeCap = StrokeCap.round
+      ..style = PaintingStyle.stroke;
+
+    final rect = Rect.fromCenter(center: Offset(cx, cy), width: 22, height: 22);
+    canvas.drawArc(rect, 0.5, 4.8, false, cPaint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

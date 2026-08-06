@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:manager_connect/core/theme/app_theme_extensions.dart';
+
 
 extension ContextExtensions on BuildContext {
   ThemeData get theme => Theme.of(this);
@@ -12,8 +12,7 @@ extension ContextExtensions on BuildContext {
 
   double get screenHeight => MediaQuery.sizeOf(this).height;
 
-  AppThemeExtension get appThemeExtension =>
-      theme.extension<AppThemeExtension>()!;
+
 
   void showSnackBar(String message, {bool isError = false}) {
     ScaffoldMessenger.of(this).hideCurrentSnackBar();

@@ -1,3 +1,33 @@
+class ChallengeTask {
+  const ChallengeTask({
+    required this.id,
+    required this.label,
+    required this.target,
+    required this.unit,
+  });
+
+  final String id;
+  final String label;
+  final double target;
+  final String unit;
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'label': label,
+        'target': target,
+        'unit': unit,
+      };
+
+  factory ChallengeTask.fromJson(Map<String, dynamic> json) {
+    return ChallengeTask(
+      id: json['id'] as String,
+      label: json['label'] as String,
+      target: (json['target'] as num).toDouble(),
+      unit: json['unit'] as String,
+    );
+  }
+}
+
 class ChallengeDto {
   const ChallengeDto({
     required this.id,
@@ -12,6 +42,8 @@ class ChallengeDto {
     required this.status,
     required this.createdAt,
     this.authorName,
+    this.authorAvatarUrl,
+    this.selectedTasks = const [],
   });
 
   final String id;
@@ -26,11 +58,24 @@ class ChallengeDto {
   final String status;
   final DateTime createdAt;
   final String? authorName;
+  final String? authorAvatarUrl;
+  final List<ChallengeTask> selectedTasks;
 
   bool get isEnded => status == 'ended';
 
   factory ChallengeDto.fromJson(Map<String, dynamic> json) {
     final profiles = json['profiles'];
+    final tasksRaw = json['selected_tasks'];
+    final tasks = <ChallengeTask>[];
+    if (tasksRaw is List) {
+      for (final t in tasksRaw) {
+        if (t is Map<String, dynamic>) {
+          try {
+            tasks.add(ChallengeTask.fromJson(t));
+          } catch (_) {}
+        }
+      }
+    }
     return ChallengeDto(
       id: json['id'] as String,
       createdBy: json['created_by'] as String,
@@ -46,6 +91,10 @@ class ChallengeDto {
       authorName: profiles is Map<String, dynamic>
           ? profiles['full_name'] as String?
           : null,
+      authorAvatarUrl: profiles is Map<String, dynamic>
+          ? profiles['avatar_url'] as String?
+          : null,
+      selectedTasks: tasks,
     );
   }
 }
@@ -92,6 +141,7 @@ class ProgressLogDto {
     required this.logDate,
     required this.value,
     this.note,
+    this.subtaskId = '',
   });
 
   final String id;
@@ -100,6 +150,7 @@ class ProgressLogDto {
   final String logDate;
   final double value;
   final String? note;
+  final String subtaskId;
 
   factory ProgressLogDto.fromJson(Map<String, dynamic> json) {
     return ProgressLogDto(
@@ -109,6 +160,7 @@ class ProgressLogDto {
       logDate: json['log_date'] as String,
       value: (json['value'] as num).toDouble(),
       note: json['note'] as String?,
+      subtaskId: json['subtask_id'] as String? ?? '',
     );
   }
 }

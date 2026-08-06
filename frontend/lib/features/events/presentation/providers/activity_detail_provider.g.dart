@@ -60,7 +60,7 @@ final class ActivityDetailNotifierProvider
 }
 
 String _$activityDetailNotifierHash() =>
-    r'd1593899e8969acfc3039f96003eb1ae1173eb85';
+    r'ffbb14fb82472a887db24057f948ee496d474a35';
 
 final class ActivityDetailNotifierFamily extends $Family
     with

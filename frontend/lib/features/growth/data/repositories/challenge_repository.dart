@@ -11,10 +11,13 @@ class ChallengeRepository {
   static const _challengeSelect =
       'id, created_by, title, description, challenge_type, goal_type, '
       'goal_description, start_date, end_date, status, created_at, '
-      'profiles(full_name)';
+      'selected_tasks, profiles(full_name, avatar_url)';
 
   static const _participantSelect =
       'id, challenge_id, user_id, joined_at, profiles(full_name, avatar_url)';
+
+  static const _progressSelect =
+      'id, challenge_id, user_id, log_date, value, note, subtask_id';
 
   Future<List<ChallengeDto>> getActive() async {
     try {
@@ -22,7 +25,28 @@ class ChallengeRepository {
           .from(Table.challenges)
           .select(_challengeSelect)
           .eq('status', 'active')
-          .order('end_date', ascending: true);
+          .order('created_at', ascending: false);
+      return response.map(ChallengeDto.fromJson).toList();
+    } catch (e) {
+      throw mapSupabaseError(e);
+    }
+  }
+
+  Future<List<ChallengeDto>> getJoined(String userId) async {
+    try {
+      final participations = await _client
+          .from(Table.challengeParticipants)
+          .select('challenge_id')
+          .eq('user_id', userId);
+      if ((participations as List).isEmpty) return [];
+      final ids = participations
+          .map((p) => p['challenge_id'] as String)
+          .toList();
+      final response = await _client
+          .from(Table.challenges)
+          .select(_challengeSelect)
+          .inFilter('id', ids)
+          .order('created_at', ascending: false);
       return response.map(ChallengeDto.fromJson).toList();
     } catch (e) {
       throw mapSupabaseError(e);
@@ -65,6 +89,7 @@ class ChallengeRepository {
     String? goalDescription,
     required String startDate,
     required String endDate,
+    List<Map<String, dynamic>> selectedTasks = const [],
   }) async {
     try {
       final response = await _client
@@ -78,6 +103,7 @@ class ChallengeRepository {
             if (goalDescription != null) 'goal_description': goalDescription,
             'start_date': startDate,
             'end_date': endDate,
+            'selected_tasks': selectedTasks,
           })
           .select(_challengeSelect)
           .single();
@@ -132,10 +158,49 @@ class ChallengeRepository {
     try {
       final response = await _client
           .from(Table.progressLogs)
-          .select('id, challenge_id, user_id, log_date, value, note')
+          .select(_progressSelect)
           .eq('challenge_id', challengeId)
           .order('log_date', ascending: false);
       return response.map(ProgressLogDto.fromJson).toList();
+    } catch (e) {
+      throw mapSupabaseError(e);
+    }
+  }
+
+  Future<List<ProgressLogDto>> getUserProgressLogs(String userId) async {
+    try {
+      final response = await _client
+          .from(Table.progressLogs)
+          .select(_progressSelect)
+          .eq('user_id', userId)
+          .order('log_date', ascending: false);
+      return response.map(ProgressLogDto.fromJson).toList();
+    } catch (e) {
+      throw mapSupabaseError(e);
+    }
+  }
+
+  /// Returns subtask progress totals for one user across multiple challenges.
+  /// Result: challengeId → subtaskId → cumulativeValue
+  Future<Map<String, Map<String, double>>> getMyProgressForChallenges(
+      String userId, List<String> challengeIds) async {
+    if (challengeIds.isEmpty) return {};
+    try {
+      final response = await _client
+          .from(Table.progressLogs)
+          .select('challenge_id, subtask_id, value')
+          .eq('user_id', userId)
+          .inFilter('challenge_id', challengeIds);
+
+      final result = <String, Map<String, double>>{};
+      for (final row in response) {
+        final cId = row['challenge_id'] as String;
+        final sId = row['subtask_id'] as String? ?? '';
+        final val = (row['value'] as num).toDouble();
+        final cMap = result[cId] ??= {};
+        cMap[sId] = (cMap[sId] ?? 0) + val;
+      }
+      return result;
     } catch (e) {
       throw mapSupabaseError(e);
     }
@@ -147,6 +212,7 @@ class ChallengeRepository {
     required String challengeParticipantId,
     required String logDate,
     required double value,
+    required String subtaskId,
     String? note,
   }) async {
     try {
@@ -157,9 +223,10 @@ class ChallengeRepository {
           'challenge_participant_id': challengeParticipantId,
           'log_date': logDate,
           'value': value,
+          'subtask_id': subtaskId,
           if (note != null) 'note': note,
         },
-        onConflict: 'challenge_id,user_id,log_date',
+        onConflict: 'challenge_id,user_id,log_date,subtask_id',
       );
     } catch (e) {
       throw mapSupabaseError(e);

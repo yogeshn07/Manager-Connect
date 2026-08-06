@@ -1,4 +1,6 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:manager_connect/core/constants/supabase_constants.dart';
 import 'package:manager_connect/features/polls/data/models/poll_dto.dart';
 import 'package:manager_connect/features/polls/data/repositories/poll_repository.dart';
 import 'package:manager_connect/shared/providers/supabase_provider.dart';
@@ -40,11 +42,16 @@ class PollDetailState {
 @riverpod
 class PollDetailNotifier extends _$PollDetailNotifier {
   PollRepository? _repo;
+  RealtimeChannel? _channel;
 
   @override
   PollDetailState build(String pollId) {
     final client = ref.watch(supabaseClientProvider);
     _repo = PollRepository(client);
+    ref.onDispose(() {
+      _channel?.unsubscribe();
+      _channel = null;
+    });
     return const PollDetailState();
   }
 
@@ -60,6 +67,7 @@ class PollDetailNotifier extends _$PollDetailNotifier {
         userVoteOptionId: () => results[1] as String?,
         isLoading: false,
       );
+      _subscribeRealtime();
     } catch (e) {
       state = state.copyWith(isLoading: false, error: e.toString);
     }
@@ -81,6 +89,31 @@ class PollDetailNotifier extends _$PollDetailNotifier {
         poll: poll,
         userVoteOptionId: () => optionId,
       );
+    } catch (_) {}
+  }
+
+  void _subscribeRealtime() {
+    _channel?.unsubscribe();
+    _channel = Supabase.instance.client
+        .channel('poll:votes:$pollId')
+        .onPostgresChanges(
+          event: PostgresChangeEvent.insert,
+          schema: 'public',
+          table: Table.pollVotes,
+          filter: PostgresChangeFilter(
+            type: PostgresChangeFilterType.eq,
+            column: 'poll_id',
+            value: pollId,
+          ),
+          callback: (_) => _refreshVoteCounts(),
+        )
+        .subscribe();
+  }
+
+  Future<void> _refreshVoteCounts() async {
+    try {
+      final poll = await _repo!.getPoll(pollId);
+      state = state.copyWith(poll: poll);
     } catch (_) {}
   }
 }

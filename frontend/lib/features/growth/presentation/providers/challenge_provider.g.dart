@@ -42,7 +42,7 @@ final class ChallengeListNotifierProvider
 }
 
 String _$challengeListNotifierHash() =>
-    r'8bf4798114e76455db7cadef41a8c6e8a21abaa9';
+    r'fc53b79db95147bf1f78011e4740c8a3705e3d62';
 
 abstract class _$ChallengeListNotifier extends $Notifier<ChallengeListState> {
   ChallengeListState build();
@@ -114,7 +114,7 @@ final class ChallengeDetailNotifierProvider
 }
 
 String _$challengeDetailNotifierHash() =>
-    r'90fef217010825e39ac82670490369d6c17abfd0';
+    r'6a877ee23a793afd1485dacdacad769f2bcdd9fe';
 
 final class ChallengeDetailNotifierFamily extends $Family
     with

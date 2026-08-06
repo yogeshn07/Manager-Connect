@@ -70,12 +70,14 @@ class PostDetailNotifier extends _$PostDetailNotifier {
   Future<void> addComment({
     required String authorId,
     required String content,
+    String? parentCommentId,
   }) async {
     try {
       final comment = await _repo!.createComment(
         postId: postId,
         authorId: authorId,
         content: content,
+        parentCommentId: parentCommentId,
       );
       state = state.copyWith(comments: [...state.comments, comment]);
     } catch (_) {}

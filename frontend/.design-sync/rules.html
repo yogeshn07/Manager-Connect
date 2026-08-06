@@ -1,0 +1,73 @@
+<!-- @dsCard group="Rules" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Critical Design Rules</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: Inter, system-ui, sans-serif; background: #F4F5F7; padding: 16px; max-width: 500px; }
+  h1 { font-size: 18px; font-weight: 500; color: #2C2C2A; margin-bottom: 16px; }
+  h2 { font-size: 11px; font-weight: 500; color: #5F5E5A; text-transform: uppercase; letter-spacing: 0.07em; margin: 16px 0 8px; }
+  .rule { background: #fff; border: 0.5px solid rgba(0,0,0,0.10); border-radius: 13px; padding: 10px 14px; margin-bottom: 6px; display: flex; gap: 10px; align-items: flex-start; }
+  .rule-num { background: #E24B4A; color: #fff; font-size: 10px; font-weight: 500; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .rule-text { font-size: 12px; font-weight: 400; color: #2C2C2A; line-height: 1.5; }
+  .rule-text strong { font-weight: 500; }
+  .do-dont { display: flex; gap: 8px; margin-bottom: 8px; }
+  .do, .dont { flex: 1; border-radius: 10px; padding: 10px; font-size: 11px; line-height: 1.5; }
+  .do { background: #E1F5EE; border: 1px solid #5DCAA5; color: #085041; }
+  .dont { background: #FCEBEB; border: 1px solid #F09595; color: #791F1F; }
+  .do strong, .dont strong { font-weight: 500; display: block; margin-bottom: 4px; }
+</style>
+</head>
+<body>
+<h1>Critical Design Rules — Do Not Break</h1>
+
+<h2>Visual Rules</h2>
+<div class="rule"><div class="rule-num">1</div><div class="rule-text"><strong>No box-shadow on any element. Ever.</strong> All depth via background contrast + borders.</div></div>
+<div class="rule"><div class="rule-num">2</div><div class="rule-text"><strong>Only font-weight 400 and 500.</strong> Never bold (600/700). Hierarchy via size and color only.</div></div>
+<div class="rule"><div class="rule-num">3</div><div class="rule-text"><strong>App background: always #F4F5F7.</strong> Never white. Never pure gray.</div></div>
+<div class="rule"><div class="rule-num">4</div><div class="rule-text"><strong>Card background: always #FFFFFF.</strong> Never tinted unless accented (celebration/unread).</div></div>
+<div class="rule"><div class="rule-num">5</div><div class="rule-text"><strong>Card corner radius: 13-16px.</strong> Never 0, never 50%.</div></div>
+<div class="rule"><div class="rule-num">6</div><div class="rule-text"><strong>All avatars are circular</strong> (border-radius: 50%). Never rectangular. Always initials.</div></div>
+<div class="rule"><div class="rule-num">7</div><div class="rule-text"><strong>Icon library: Tabler outline ONLY.</strong> No filled variants. No other icon library.</div></div>
+<div class="rule"><div class="rule-num">8</div><div class="rule-text"><strong>Icon tiles must have 1-1.5px colored border.</strong> Never flat fill without border.</div></div>
+<div class="rule"><div class="rule-num">9</div><div class="rule-text"><strong>"You" row: always blue left-stripe + #F5F9FF bg</strong> in any ranked list.</div></div>
+<div class="rule"><div class="rule-num">10</div><div class="rule-text"><strong>Serif font only for recognition quotes and wellness reflections.</strong> Never elsewhere.</div></div>
+
+<h2>Interaction Rules</h2>
+<div class="rule"><div class="rule-num">11</div><div class="rule-text"><strong>Back labels use parent screen name</strong>, never generic "Back".</div></div>
+<div class="rule"><div class="rule-num">12</div><div class="rule-text"><strong>Bottom nav NEVER shown on detail screens.</strong> Root screens only.</div></div>
+<div class="rule"><div class="rule-num">13</div><div class="rule-text"><strong>Admin nav is completely separate from member nav.</strong></div></div>
+<div class="rule"><div class="rule-num">14</div><div class="rule-text"><strong>Progress bar colors encode status:</strong> teal = healthy, amber = expiring, red = below threshold (admin only).</div></div>
+<div class="rule"><div class="rule-num">15</div><div class="rule-text"><strong>Min touch target:</strong> 44px primary, 34px secondary.</div></div>
+<div class="rule"><div class="rule-num">16</div><div class="rule-text"><strong>Color never conveys meaning alone</strong> — always pair with text or icon.</div></div>
+
+<h2>Color Semantic Mapping</h2>
+<div class="do-dont">
+  <div class="do">
+    <strong>DO: Color = meaning</strong>
+    Blue = brand/active<br>
+    Teal = success/wellness<br>
+    Amber = recognition/gold<br>
+    Red = urgent/error<br>
+    Purple = mindset/mentions<br>
+    Coral = sports/events
+  </div>
+  <div class="dont">
+    <strong>DON'T: Color = decoration</strong>
+    Don't use teal "because it looks nice"<br>
+    Don't use red for non-urgent items<br>
+    Don't use amber outside recognition<br>
+    Don't mix semantic meanings<br>
+    Every color use must be intentional
+  </div>
+</div>
+
+<h2>Quality Bar</h2>
+<div class="rule" style="border-left:3px solid #0C447C">
+  <div class="rule-text">Target: premium blend of <strong>LinkedIn Premium</strong> (identity), <strong>Strava</strong> (gamification), <strong>Apple Fitness</strong> (progress rings), <strong>Linear</strong> (structured admin), <strong>Airbnb</strong> (event discovery). If it looks like enterprise HR software, it hasn't reached the standard.</div>
+</div>
+</body>
+</html>

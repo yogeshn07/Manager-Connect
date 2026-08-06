@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:manager_connect/shared/widgets/mc/mc_buttons.dart';
+import 'package:manager_connect/shared/widgets/mc/mc_colors.dart';
+import 'package:manager_connect/shared/widgets/mc/mc_spacing.dart';
+import 'package:manager_connect/shared/widgets/mc/mc_typography.dart';
 
 class ErrorState extends StatelessWidget {
   const ErrorState({
@@ -14,26 +18,41 @@ class ErrorState extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.all(MCSpacing.xl),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              Icons.error_outline,
-              size: 48,
-              color: Theme.of(context).colorScheme.error,
+            Container(
+              width: 64,
+              height: 64,
+              decoration: BoxDecoration(
+                color: MCColors.errorBg,
+                borderRadius: BorderRadius.circular(MCSpacing.radiusMd),
+              ),
+              child: const Icon(
+                Icons.error_outline_rounded,
+                size: 32,
+                color: MCColors.error,
+              ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: MCSpacing.md),
+            Text(
+              'Something went wrong',
+              style: MCTypography.h4,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 6),
             Text(
               message,
+              style: MCTypography.caption,
               textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodyLarge,
             ),
             if (onRetry != null) ...[
-              const SizedBox(height: 16),
-              FilledButton.tonal(
+              const SizedBox(height: MCSpacing.lg),
+              MCGhostButton(
+                label: 'Try Again',
+                icon: Icons.refresh,
                 onPressed: onRetry,
-                child: const Text('Retry'),
               ),
             ],
           ],

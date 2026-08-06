@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -17,7 +18,7 @@ void main() async {
   if (FirebaseConfig.isConfigured) {
     try {
       await Firebase.initializeApp(
-        options: FirebaseOptions(
+        options: const FirebaseOptions(
           apiKey: FirebaseConfig.apiKey,
           authDomain: FirebaseConfig.authDomain,
           projectId: FirebaseConfig.projectId,
@@ -26,6 +27,8 @@ void main() async {
           appId: FirebaseConfig.appId,
         ),
       );
+      // Register background handler immediately after Firebase init
+      FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
       log('Firebase initialized');
     } catch (e) {
       log('Firebase init failed: $e');
@@ -34,6 +37,7 @@ void main() async {
     // Native platforms: try default config (google-services.json / GoogleService-Info.plist)
     try {
       await Firebase.initializeApp();
+      FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
       log('Firebase initialized (default config)');
     } catch (e) {
       log('Firebase init skipped: $e');
@@ -43,7 +47,9 @@ void main() async {
   }
 
   if (!Env.isConfigured) {
-    runApp(const _ErrorApp(message: 'Missing SUPABASE_URL or SUPABASE_ANON_KEY'));
+    runApp(
+      const _ErrorApp(message: 'Missing SUPABASE_URL or SUPABASE_ANON_KEY'),
+    );
     return;
   }
 

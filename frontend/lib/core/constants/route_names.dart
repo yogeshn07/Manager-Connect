@@ -3,6 +3,7 @@ abstract final class RouteNames {
   static const String welcome = '/welcome';
   static const String verifyOtp = '/verify-otp';
   static const String createProfile = '/create-profile';
+  static const String gate = '/gate';
 
   // Tab roots
   static const String feed = '/feed';
@@ -20,8 +21,19 @@ abstract final class RouteNames {
   static const String memberProfile = '/profile/:id';
   static const String notifications = '/notifications';
 
+  // Feed sub-routes
+  static const String activeMembers = '/active-members';
+
+  // Catalyst Insights
+  static const String insights = '/insights';
+  static const String insightSubmit = '/insights/submit';
+  static const String insightHistory = '/insights/history';
+  static const String insightDetail = '/insights/:id';
+
   // Admin
   static const String admin = '/admin';
+  static const String adminInsightReview = '/admin/insights/review';
+  static const String adminInsightPipeline = '/admin/insights/pipeline';
   static const String adminMembers = '/admin/members';
   static const String adminFlagged = '/admin/flagged';
   static const String adminAnnouncements = '/admin/announcements';

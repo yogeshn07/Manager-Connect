@@ -1,14 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:manager_connect/core/theme/app_theme_extensions.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:manager_connect/features/auth/presentation/providers/auth_notifier.dart';
+import 'package:manager_connect/features/feed/presentation/widgets/feed_poll_widget.dart';
+import 'package:manager_connect/shared/widgets/mc/mc_colors.dart';
 import 'package:manager_connect/features/events/data/models/activity_dto.dart';
 import 'package:manager_connect/features/events/presentation/providers/activities_provider.dart';
 import 'package:manager_connect/features/events/presentation/providers/activity_detail_provider.dart';
 import 'package:manager_connect/shared/widgets/error_state.dart';
 import 'package:manager_connect/shared/widgets/loading_state.dart';
 import 'package:manager_connect/shared/widgets/toast.dart';
+
+String _toTitleCase(String raw) => raw
+    .replaceAll('_', ' ')
+    .split(' ')
+    .map((w) => w.isEmpty ? w : '${w[0].toUpperCase()}${w.substring(1)}')
+    .join(' ');
+
+String _rsvpLabel(String status) => switch (status) {
+      'going'     => 'Available',
+      'maybe'     => 'Maybe',
+      'not_going' => 'Not Available',
+      _           => _toTitleCase(status),
+    };
 
 class ActivityDetailScreen extends ConsumerStatefulWidget {
   const ActivityDetailScreen({required this.activityId, super.key});
@@ -38,6 +53,14 @@ class _ActivityDetailScreenState
     return null;
   }
 
+  Future<void> _openInMaps(String location) async {
+    final uri = Uri.parse(
+        'https://maps.google.com/?q=${Uri.encodeComponent(location)}');
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(activityDetailProvider(widget.activityId));
@@ -54,11 +77,9 @@ class _ActivityDetailScreenState
                 if (value == 'cancel') _cancelActivity();
                 if (value == 'update') _showPostUpdate();
               },
-              itemBuilder: (_) => [
-                const PopupMenuItem(
-                    value: 'update', child: Text('Post Update')),
-                const PopupMenuItem(
-                    value: 'cancel', child: Text('Cancel Event')),
+              itemBuilder: (_) => const [
+                PopupMenuItem(value: 'update', child: Text('Post Update')),
+                PopupMenuItem(value: 'cancel', child: Text('Cancel Event')),
               ],
             ),
         ],
@@ -79,12 +100,9 @@ class _ActivityDetailScreenState
     }
 
     final activity = state.activity!;
-    final theme = Theme.of(context);
-    final ext = theme.extension<AppThemeExtension>();
-    final userId = _currentUserId;
-    final myRsvp = state.rsvps
-        .where((r) => r.userId == userId)
-        .toList();
+    final theme    = Theme.of(context);
+    final userId   = _currentUserId;
+    final myRsvp   = state.rsvps.where((r) => r.userId == userId).toList();
     final myStatus = myRsvp.isNotEmpty ? myRsvp.first.status : null;
 
     return RefreshIndicator(
@@ -94,6 +112,7 @@ class _ActivityDetailScreenState
       child: ListView(
         padding: const EdgeInsets.all(16),
         children: [
+          // Cancelled banner
           if (activity.isCancelled)
             Container(
               padding: const EdgeInsets.all(12),
@@ -111,43 +130,91 @@ class _ActivityDetailScreenState
                 ],
               ),
             ),
+
+          // Title
           Text(activity.title, style: theme.textTheme.headlineSmall),
           const SizedBox(height: 12),
-          _infoRow(Icons.calendar_today,
-              DateFormat('EEEE, MMMM d · h:mm a').format(activity.eventDate.toLocal())),
+
+          // Date
+          _infoRow(
+            Icons.calendar_today,
+            DateFormat('EEEE, MMMM d · h:mm a')
+                .format(activity.eventDate.toLocal()),
+          ),
+
+          // Location — tappable → opens Google Maps
           if (activity.location != null)
-            _infoRow(Icons.location_on_outlined, activity.location!),
-          _infoRow(Icons.category_outlined,
-              '${activity.eventCategory.replaceAll('_', ' ')}${activity.eventType != null ? ' · ${activity.eventType!.replaceAll('_', ' ')}' : ''}'),
+            _tappableInfoRow(
+              Icons.location_on,
+              activity.location!,
+              iconColor: Colors.redAccent,
+              trailingIcon: Icons.open_in_new,
+              onTap: () => _openInMaps(activity.location!),
+            ),
+
+          // Category · Type (Title Case)
+          _infoRow(
+            Icons.category_outlined,
+            '${_toTitleCase(activity.eventCategory)}'
+            '${activity.eventType != null ? ' · ${_toTitleCase(activity.eventType!)}' : ''}',
+          ),
+
           if (activity.costNote != null)
             _infoRow(Icons.payments_outlined, activity.costNote!),
+
           _infoRow(Icons.person_outline,
-              'Organized by ${activity.author?.fullName ?? 'Unknown'}'),
+              'Organised by ${activity.author?.fullName ?? 'Unknown'}'),
+
           if (activity.description != null) ...[
             const Divider(height: 32),
             Text(activity.description!, style: theme.textTheme.bodyLarge),
           ],
+
           const Divider(height: 32),
+
+          // ── Attendees ─────────────────────────────────────────────
           Row(
             children: [
               Text('Attendees', style: theme.textTheme.titleMedium),
               const Spacer(),
               Text(
-                '${state.goingCount} going · ${state.maybeCount} maybe',
-                style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurfaceVariant),
+                '${state.goingCount} available · ${state.maybeCount} maybe',
+                style: theme.textTheme.bodySmall
+                    ?.copyWith(color: theme.colorScheme.onSurfaceVariant),
               ),
             ],
           ),
           const SizedBox(height: 8),
+
           if (!activity.isCancelled && userId != null)
-            _buildRsvpButtons(userId, myStatus, ext),
+            _buildRsvpButtons(userId, myStatus),
+
           if (state.rsvps.isNotEmpty) ...[
             const SizedBox(height: 12),
             ...state.rsvps
                 .where((r) => r.status != 'not_going')
                 .map(_buildRsvpTile),
           ],
+
+          // ── Feed Poll results ─────────────────────────────────────
+          if (state.poll != null) ...[
+            const Divider(height: 32),
+            Row(
+              children: [
+                const Icon(Icons.poll_outlined,
+                    size: 16, color: MCColors.primaryMid),
+                const SizedBox(width: 6),
+                Text('Poll Responses', style: theme.textTheme.titleMedium),
+              ],
+            ),
+            const SizedBox(height: 12),
+            FeedPollWidget(
+              poll: state.poll!,
+              userId: userId ?? '',
+            ),
+          ],
+
+          // ── Updates ───────────────────────────────────────────────
           if (state.updates.isNotEmpty) ...[
             const Divider(height: 32),
             Text('Updates', style: theme.textTheme.titleMedium),
@@ -159,30 +226,69 @@ class _ActivityDetailScreenState
     );
   }
 
-  Widget _infoRow(IconData icon, String text) {
+  Widget _infoRow(IconData icon, String text, {Color? iconColor}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
         children: [
-          Icon(icon, size: 18,
-              color: Theme.of(context).colorScheme.onSurfaceVariant),
+          Icon(icon,
+              size: 18,
+              color: iconColor ??
+                  Theme.of(context).colorScheme.onSurfaceVariant),
           const SizedBox(width: 10),
           Expanded(
-            child: Text(text, style: Theme.of(context).textTheme.bodyMedium),
+            child:
+                Text(text, style: Theme.of(context).textTheme.bodyMedium),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildRsvpButtons(
-      String userId, String? myStatus, AppThemeExtension? ext) {
+  Widget _tappableInfoRow(
+    IconData icon,
+    String text, {
+    Color? iconColor,
+    IconData? trailingIcon,
+    VoidCallback? onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 4),
+        child: Row(
+          children: [
+            Icon(icon,
+                size: 18,
+                color: iconColor ??
+                    Theme.of(context).colorScheme.onSurfaceVariant),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                text,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: MCColors.primaryMid,
+                      decoration: TextDecoration.underline,
+                      decorationColor: MCColors.primaryMid,
+                    ),
+              ),
+            ),
+            if (trailingIcon != null)
+              Icon(trailingIcon,
+                  size: 14, color: MCColors.primaryMid),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRsvpButtons(String userId, String? myStatus) {
     return SegmentedButton<String>(
       segments: const [
         ButtonSegment(
           value: 'going',
           icon: Icon(Icons.check_circle_outline, size: 18),
-          label: Text('Going'),
+          label: Text('Available'),
         ),
         ButtonSegment(
           value: 'maybe',
@@ -192,7 +298,7 @@ class _ActivityDetailScreenState
         ButtonSegment(
           value: 'not_going',
           icon: Icon(Icons.cancel_outlined, size: 18),
-          label: Text('No'),
+          label: Text('Not Available'),
         ),
       ],
       selected: myStatus != null ? {myStatus} : {},
@@ -212,11 +318,10 @@ class _ActivityDetailScreenState
   }
 
   Widget _buildRsvpTile(RsvpDto rsvp) {
-    final ext = Theme.of(context).extension<AppThemeExtension>();
     final color = switch (rsvp.status) {
-      'going' => ext?.rsvpGoingColor,
-      'maybe' => ext?.rsvpMaybeColor,
-      _ => null,
+      'going' => MCColors.success,
+      'maybe' => MCColors.amber,
+      _       => null,
     };
 
     return ListTile(
@@ -230,13 +335,14 @@ class _ActivityDetailScreenState
       ),
       title: Text(rsvp.userName ?? 'Unknown'),
       trailing: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+        padding:
+            const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
         decoration: BoxDecoration(
           color: color?.withValues(alpha: 0.15),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Text(
-          rsvp.status.replaceAll('_', ' '),
+          _rsvpLabel(rsvp.status),
           style: TextStyle(fontSize: 12, color: color),
         ),
       ),
@@ -254,9 +360,12 @@ class _ActivityDetailScreenState
             Text(update.content),
             const SizedBox(height: 4),
             Text(
-              DateFormat('MMM d, h:mm a').format(update.createdAt.toLocal()),
+              DateFormat('MMM d, h:mm a')
+                  .format(update.createdAt.toLocal()),
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant),
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onSurfaceVariant),
             ),
           ],
         ),

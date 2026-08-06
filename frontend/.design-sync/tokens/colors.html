@@ -1,0 +1,98 @@
+<!-- @dsCard group="Design Tokens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Color Tokens</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: Inter, system-ui, sans-serif; background: #F4F5F7; padding: 16px; font-weight: 400; }
+  h1 { font-size: 18px; font-weight: 500; color: #2C2C2A; margin-bottom: 16px; }
+  h2 { font-size: 14px; font-weight: 500; color: #5F5E5A; margin: 16px 0 8px; text-transform: uppercase; letter-spacing: 0.07em; }
+  .ramp { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 12px; }
+  .swatch { width: 64px; height: 64px; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; padding: 4px; border: 0.5px solid rgba(0,0,0,0.10); }
+  .swatch span { font-size: 8px; font-weight: 500; background: rgba(255,255,255,0.85); padding: 1px 4px; border-radius: 3px; }
+  .swatch .token { font-size: 7px; color: #5F5E5A; margin-top: 1px; }
+</style>
+</head>
+<body>
+<h1>Manager Connect — Color Tokens</h1>
+
+<h2>Brand Primary</h2>
+<div class="ramp">
+  <div class="swatch" style="background:#042C53"><span style="color:#fff">042C53</span><span class="token" style="color:#ccc">900</span></div>
+  <div class="swatch" style="background:#0C447C"><span style="color:#fff">0C447C</span><span class="token" style="color:#ccc">800</span></div>
+  <div class="swatch" style="background:#185FA5"><span style="color:#fff">185FA5</span><span class="token" style="color:#ccc">700</span></div>
+  <div class="swatch" style="background:#378ADD"><span style="color:#fff">378ADD</span><span class="token" style="color:#ccc">400</span></div>
+  <div class="swatch" style="background:#85B7EB"><span>85B7EB</span><span class="token">200</span></div>
+  <div class="swatch" style="background:#B5D4F4"><span>B5D4F4</span><span class="token">100</span></div>
+  <div class="swatch" style="background:#E6F1FB"><span>E6F1FB</span><span class="token">50</span></div>
+  <div class="swatch" style="background:#F5F9FF"><span>F5F9FF</span><span class="token">whisper</span></div>
+</div>
+
+<h2>Teal (Success / Wellness)</h2>
+<div class="ramp">
+  <div class="swatch" style="background:#085041"><span style="color:#fff">085041</span><span class="token" style="color:#ccc">800</span></div>
+  <div class="swatch" style="background:#0F6E56"><span style="color:#fff">0F6E56</span><span class="token" style="color:#ccc">600</span></div>
+  <div class="swatch" style="background:#1D9E75"><span style="color:#fff">1D9E75</span><span class="token" style="color:#ccc">400</span></div>
+  <div class="swatch" style="background:#9FE1CB"><span>9FE1CB</span><span class="token">100</span></div>
+  <div class="swatch" style="background:#E1F5EE"><span>E1F5EE</span><span class="token">50</span></div>
+</div>
+
+<h2>Amber (Recognition / Gold)</h2>
+<div class="ramp">
+  <div class="swatch" style="background:#633806"><span style="color:#fff">633806</span><span class="token" style="color:#ccc">800</span></div>
+  <div class="swatch" style="background:#854F0B"><span style="color:#fff">854F0B</span><span class="token" style="color:#ccc">600</span></div>
+  <div class="swatch" style="background:#BA7517"><span style="color:#fff">BA7517</span><span class="token" style="color:#ccc">400</span></div>
+  <div class="swatch" style="background:#FAC775"><span>FAC775</span><span class="token">100</span></div>
+  <div class="swatch" style="background:#FAEEDA"><span>FAEEDA</span><span class="token">50</span></div>
+</div>
+
+<h2>Red (Urgent / Error)</h2>
+<div class="ramp">
+  <div class="swatch" style="background:#791F1F"><span style="color:#fff">791F1F</span><span class="token" style="color:#ccc">800</span></div>
+  <div class="swatch" style="background:#A32D2D"><span style="color:#fff">A32D2D</span><span class="token" style="color:#ccc">600</span></div>
+  <div class="swatch" style="background:#E24B4A"><span style="color:#fff">E24B4A</span><span class="token" style="color:#ccc">400</span></div>
+  <div class="swatch" style="background:#F09595"><span>F09595</span><span class="token">200</span></div>
+  <div class="swatch" style="background:#FCEBEB"><span>FCEBEB</span><span class="token">50</span></div>
+</div>
+
+<h2>Purple (Mindset / Mentions)</h2>
+<div class="ramp">
+  <div class="swatch" style="background:#26215C"><span style="color:#fff">26215C</span><span class="token" style="color:#ccc">900</span></div>
+  <div class="swatch" style="background:#3C3489"><span style="color:#fff">3C3489</span><span class="token" style="color:#ccc">800</span></div>
+  <div class="swatch" style="background:#534AB7"><span style="color:#fff">534AB7</span><span class="token" style="color:#ccc">600</span></div>
+  <div class="swatch" style="background:#7F77DD"><span style="color:#fff">7F77DD</span><span class="token" style="color:#ccc">400</span></div>
+  <div class="swatch" style="background:#EEEDFE"><span>EEEDFE</span><span class="token">50</span></div>
+</div>
+
+<h2>Coral (Sports / Events)</h2>
+<div class="ramp">
+  <div class="swatch" style="background:#712B13"><span style="color:#fff">712B13</span><span class="token" style="color:#ccc">800</span></div>
+  <div class="swatch" style="background:#993C1D"><span style="color:#fff">993C1D</span><span class="token" style="color:#ccc">600</span></div>
+  <div class="swatch" style="background:#D85A30"><span style="color:#fff">D85A30</span><span class="token" style="color:#ccc">400</span></div>
+  <div class="swatch" style="background:#FAECE7"><span>FAECE7</span><span class="token">50</span></div>
+</div>
+
+<h2>Backgrounds</h2>
+<div class="ramp">
+  <div class="swatch" style="background:#F4F5F7; border: 1px solid #ccc"><span>F4F5F7</span><span class="token">bg-app</span></div>
+  <div class="swatch" style="background:#FFFFFF; border: 1px solid #ccc"><span>FFFFFF</span><span class="token">bg-card</span></div>
+  <div class="swatch" style="background:#0C447C"><span style="color:#fff">0C447C</span><span class="token" style="color:#ccc">hero-primary</span></div>
+  <div class="swatch" style="background:#085041"><span style="color:#fff">085041</span><span class="token" style="color:#ccc">hero-wellness</span></div>
+  <div class="swatch" style="background:#A32D2D"><span style="color:#fff">A32D2D</span><span class="token" style="color:#ccc">hero-admin</span></div>
+</div>
+
+<h2>Gray (Neutral / Structural)</h2>
+<div class="ramp">
+  <div class="swatch" style="background:#2C2C2A"><span style="color:#fff">2C2C2A</span><span class="token" style="color:#ccc">900</span></div>
+  <div class="swatch" style="background:#444441"><span style="color:#fff">444441</span><span class="token" style="color:#ccc">800</span></div>
+  <div class="swatch" style="background:#5F5E5A"><span style="color:#fff">5F5E5A</span><span class="token" style="color:#ccc">600</span></div>
+  <div class="swatch" style="background:#888780"><span style="color:#fff">888780</span><span class="token" style="color:#ccc">400</span></div>
+  <div class="swatch" style="background:#B4B2A9"><span>B4B2A9</span><span class="token">200</span></div>
+  <div class="swatch" style="background:#D3D1C7"><span>D3D1C7</span><span class="token">100</span></div>
+  <div class="swatch" style="background:#F1EFE8"><span>F1EFE8</span><span class="token">50</span></div>
+</div>
+</body>
+</html>

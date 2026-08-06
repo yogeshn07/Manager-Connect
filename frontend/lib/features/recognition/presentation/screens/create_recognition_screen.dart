@@ -5,6 +5,12 @@ import 'package:manager_connect/core/errors/app_exception.dart';
 import 'package:manager_connect/features/recognition/data/repositories/recognition_repository.dart';
 import 'package:manager_connect/features/recognition/presentation/providers/recognition_provider.dart';
 import 'package:manager_connect/shared/providers/supabase_provider.dart';
+import 'package:manager_connect/shared/widgets/mc/mc_avatar.dart';
+import 'package:manager_connect/shared/widgets/mc/mc_buttons.dart';
+import 'package:manager_connect/shared/widgets/mc/mc_colors.dart';
+import 'package:manager_connect/shared/widgets/mc/mc_inputs.dart';
+import 'package:manager_connect/shared/widgets/mc/mc_spacing.dart';
+import 'package:manager_connect/shared/widgets/mc/mc_typography.dart';
 import 'package:manager_connect/shared/widgets/toast.dart';
 
 class CreateRecognitionScreen extends ConsumerStatefulWidget {
@@ -26,15 +32,16 @@ class _CreateRecognitionScreenState
 
   static const _categories = {
     'community_contributor': 'Community Contributor',
-    'fitness_champion': 'Fitness Champion',
-    'wellness_champion': 'Wellness Champion',
-    'event_champion': 'Event Champion',
+    'fitness_champion':      'Fitness Champion',
+    'wellness_champion':     'Wellness Champion',
+    'event_champion':        'Event Champion',
     'most_supportive_manager': 'Most Supportive Manager',
   };
 
   @override
   void initState() {
     super.initState();
+    _messageController.addListener(() => setState(() {}));
     _loadMembers();
   }
 
@@ -47,9 +54,11 @@ class _CreateRecognitionScreenState
   Future<void> _loadMembers() async {
     try {
       final client = ref.read(supabaseClientProvider);
-      final repo = RecognitionRepository(client);
+      final repo   = RecognitionRepository(client);
       final members = await repo.getActiveMembers();
-      if (mounted) setState(() { _members = members; _loadingMembers = false; });
+      if (mounted) {
+        setState(() { _members = members; _loadingMembers = false; });
+      }
     } catch (_) {
       if (mounted) setState(() => _loadingMembers = false);
     }
@@ -65,27 +74,26 @@ class _CreateRecognitionScreenState
       return;
     }
     if (_messageController.text.trim().isEmpty) {
-      showErrorToast(context, 'Write a message');
+      showErrorToast(context, 'Write a recognition message');
       return;
     }
-
     setState(() => _submitting = true);
     try {
       final client = ref.read(supabaseClientProvider);
-      final repo = RecognitionRepository(client);
+      final repo   = RecognitionRepository(client);
       await repo.createRecognition(
         recipientIds: _selectedRecipients.toList(),
-        categoryTag: _categoryTag!,
-        message: _messageController.text.trim(),
+        categoryTag:  _categoryTag!,
+        message:      _messageController.text.trim(),
       );
       await ref.read(recognitionFeedProvider.notifier).refresh();
       if (mounted) {
         Navigator.of(context).pop();
-        showSuccessToast(context, 'Recognition sent!');
+        showSuccessToast(context, 'Recognition sent! 🎉');
       }
     } on AppException catch (e) {
       if (mounted) showErrorToast(context, e.message);
-    } catch (e) {
+    } catch (_) {
       if (mounted) showErrorToast(context, 'Failed to send recognition');
     } finally {
       if (mounted) setState(() => _submitting = false);
@@ -95,90 +103,248 @@ class _CreateRecognitionScreenState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Give Recognition'),
-        leading: IconButton(
-          icon: const Icon(Icons.close),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        actions: [
-          FilledButton(
-            onPressed: _submitting ? null : _submit,
-            child: _submitting
-                ? const SizedBox(
-                    width: 16, height: 16,
-                    child: CircularProgressIndicator(strokeWidth: 2))
-                : const Text('Send'),
-          ),
-          const SizedBox(width: 8),
-        ],
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+      backgroundColor: MCColors.background,
+      body: SafeArea(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text('Category *',
-                style: Theme.of(context).textTheme.titleMedium),
-            const SizedBox(height: 8),
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: _categories.entries.map((e) {
-                final selected = _categoryTag == e.key;
-                return ChoiceChip(
-                  label: Text(e.value),
-                  selected: selected,
-                  onSelected: _submitting
-                      ? null
-                      : (_) => setState(() => _categoryTag = e.key),
-                );
-              }).toList(),
+            // ── Header ────────────────────────────────────────────────
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+              decoration: const BoxDecoration(
+                color: MCColors.card,
+                border: Border(bottom: BorderSide(color: MCColors.borderLight)),
+              ),
+              child: Row(
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.close, size: 22),
+                    onPressed: () => Navigator.of(context).pop(),
+                    color: MCColors.textPrimary,
+                  ),
+                  Text('Give Recognition', style: MCTypography.h3),
+                  const Spacer(),
+                  MCAmberButton(
+                    label: 'Send',
+                    loading: _submitting,
+                    icon: Icons.send,
+                    onPressed: _submit,
+                  ),
+                  const SizedBox(width: 8),
+                ],
+              ),
             ),
-            const SizedBox(height: 24),
-            Text('Recipients *',
-                style: Theme.of(context).textTheme.titleMedium),
-            const SizedBox(height: 8),
-            if (_loadingMembers)
-              const Center(child: CircularProgressIndicator())
-            else
-              Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: _members.map((m) {
-                  final id = m['id'] as String;
-                  final name = m['full_name'] as String;
-                  final selected = _selectedRecipients.contains(id);
-                  return FilterChip(
-                    label: Text(name),
-                    selected: selected,
-                    onSelected: _submitting
-                        ? null
-                        : (v) => setState(() {
-                              if (v) {
-                                _selectedRecipients.add(id);
-                              } else {
-                                _selectedRecipients.remove(id);
-                              }
-                            }),
-                  );
-                }).toList(),
+
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(MCSpacing.pageH),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // ── Hero banner ──────────────────────────────────
+                    Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [MCColors.amberLight, MCColors.amberPale],
+                        ),
+                        borderRadius: BorderRadius.circular(MCSpacing.radiusMd),
+                        border: Border.all(
+                          color: MCColors.amber.withValues(alpha: 0.3),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 48,
+                            height: 48,
+                            decoration: BoxDecoration(
+                              color: MCColors.amberLight,
+                              borderRadius: BorderRadius.circular(14),
+                              border: Border.all(
+                                color: MCColors.amberDark.withValues(alpha: 0.3),
+                              ),
+                            ),
+                            child: const Icon(
+                              Icons.emoji_events,
+                              color: MCColors.amber,
+                              size: 28,
+                            ),
+                          ),
+                          const SizedBox(width: 14),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Celebrate someone who\nmade a difference',
+                                  style: MCTypography.h4.copyWith(
+                                    color: MCColors.amberDark,
+                                  ),
+                                ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  'Recognitions are shared with the community',
+                                  style: MCTypography.caption,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: MCSpacing.lg),
+
+                    // ── Category ──────────────────────────────────────
+                    Text('Category *', style: MCTypography.h4),
+                    const SizedBox(height: 8),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: _categories.entries.map((e) {
+                        final sel = _categoryTag == e.key;
+                        return GestureDetector(
+                          onTap: _submitting
+                              ? null
+                              : () => setState(() => _categoryTag = e.key),
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 180),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 14,
+                              vertical: 8,
+                            ),
+                            decoration: BoxDecoration(
+                              color:   sel ? MCColors.amber.withValues(alpha: 0.15) : MCColors.card,
+                              borderRadius: BorderRadius.circular(MCSpacing.radiusPill),
+                              border: Border.all(
+                                color: sel ? MCColors.amberDark : MCColors.border,
+                                width: sel ? 1.5 : 1,
+                              ),
+                            ),
+                            child: Text(
+                              e.value,
+                              style: MCTypography.labelSm.copyWith(
+                                color: sel ? MCColors.amberDark : MCColors.textSecondary,
+                              ),
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                    const SizedBox(height: MCSpacing.lg),
+
+                    // ── Recipients ────────────────────────────────────
+                    Text('Who are you recognizing? *', style: MCTypography.h4),
+                    const SizedBox(height: 8),
+                    if (_loadingMembers)
+                      const Center(
+                        child: Padding(
+                          padding: EdgeInsets.all(20),
+                          child: CircularProgressIndicator(),
+                        ),
+                      )
+                    else
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: _members.map((m) {
+                          final id   = m['id'] as String;
+                          final name = m['full_name'] as String;
+                          final sel  = _selectedRecipients.contains(id);
+                          return GestureDetector(
+                            onTap: _submitting
+                                ? null
+                                : () => setState(() {
+                                      if (sel) {
+                                        _selectedRecipients.remove(id);
+                                      } else {
+                                        _selectedRecipients.add(id);
+                                      }
+                                    }),
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 180),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 8,
+                              ),
+                              decoration: BoxDecoration(
+                                color: sel
+                                    ? MCColors.amber.withValues(alpha: 0.12)
+                                    : MCColors.card,
+                                borderRadius:
+                                    BorderRadius.circular(MCSpacing.radiusPill),
+                                border: Border.all(
+                                  color: sel ? MCColors.amberDark : MCColors.border,
+                                  width: sel ? 1.5 : 1,
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  MCAvatar(
+                                    initials: name.isNotEmpty
+                                        ? name[0].toUpperCase()
+                                        : '?',
+                                    size: 24,
+                                    backgroundColor: sel
+                                        ? MCColors.amber
+                                        : MCColors.textMuted,
+                                  ),
+                                  const SizedBox(width: 7),
+                                  Text(
+                                    name,
+                                    style: MCTypography.labelSm.copyWith(
+                                      color: sel
+                                          ? MCColors.amberDark
+                                          : MCColors.textSecondary,
+                                    ),
+                                  ),
+                                  if (sel) ...[
+                                    const SizedBox(width: 6),
+                                    const Icon(
+                                      Icons.check_circle,
+                                      size: 14,
+                                      color: MCColors.amberDark,
+                                    ),
+                                  ],
+                                ],
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    const SizedBox(height: MCSpacing.lg),
+
+                    // ── Message ───────────────────────────────────────
+                    Text('Recognition message *', style: MCTypography.h4),
+                    const SizedBox(height: 8),
+                    Container(
+                      padding: const EdgeInsets.all(14),
+                      decoration: BoxDecoration(
+                        color: MCColors.card,
+                        borderRadius: BorderRadius.circular(MCSpacing.radiusMd),
+                        border: Border.all(color: MCColors.border),
+                      ),
+                      child: MCInput(
+                        controller: _messageController,
+                        hint: 'Why are you recognizing them? What did they do?',
+                        maxLines: 4,
+                        maxLength: AppConstants.maxRecognitionMessageLength,
+                        enabled: !_submitting,
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+
+                    MCAmberButton(
+                      label: 'Send Recognition',
+                      loading: _submitting,
+                      icon: Icons.emoji_events,
+                      onPressed: _submit,
+                    ),
+                  ],
+                ),
               ),
-            const SizedBox(height: 24),
-            TextField(
-              controller: _messageController,
-              decoration: InputDecoration(
-                labelText: 'Message *',
-                hintText: 'Why are you recognizing them?',
-                border: const OutlineInputBorder(),
-                counterText:
-                    '${_messageController.text.length}/${AppConstants.maxRecognitionMessageLength}',
-              ),
-              maxLines: 4,
-              maxLength: AppConstants.maxRecognitionMessageLength,
-              textCapitalization: TextCapitalization.sentences,
-              enabled: !_submitting,
-              onChanged: (_) => setState(() {}),
             ),
           ],
         ),

@@ -2,6 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:manager_connect/features/events/data/models/activity_dto.dart';
 
+String _toTitleCase(String raw) => raw
+    .replaceAll('_', ' ')
+    .split(' ')
+    .map((w) => w.isEmpty ? w : '${w[0].toUpperCase()}${w.substring(1)}')
+    .join(' ');
+
 class ActivityCard extends StatelessWidget {
   const ActivityCard({required this.activity, this.onTap, super.key});
 
@@ -93,9 +99,7 @@ class ActivityCard extends StatelessWidget {
               if (activity.eventType != null) ...[
                 const SizedBox(height: 8),
                 Chip(
-                  label: Text(
-                    activity.eventType!.replaceAll('_', ' '),
-                  ),
+                  label: Text(_toTitleCase(activity.eventType!)),
                   visualDensity: VisualDensity.compact,
                   materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),

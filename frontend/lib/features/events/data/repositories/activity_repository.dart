@@ -31,7 +31,7 @@ class ActivityRepository {
       }
 
       final response =
-          await query.order('event_date', ascending: true);
+          await query.order('created_at', ascending: false);
       return response.map(ActivityDto.fromJson).toList();
     } catch (e) {
       throw mapSupabaseError(e);

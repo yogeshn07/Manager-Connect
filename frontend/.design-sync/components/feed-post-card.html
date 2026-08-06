@@ -1,0 +1,197 @@
+<!-- @dsCard group="Components" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Feed Post Card</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: Inter, system-ui, sans-serif; background: #F4F5F7; padding: 12px; max-width: 390px; }
+
+  .card { background: #fff; border: 0.5px solid rgba(0,0,0,0.10); border-radius: 14px; overflow: hidden; margin-bottom: 10px; }
+
+  /* Recognition Post */
+  .recog-banner { background: #0C447C; padding: 12px 14px; display: flex; align-items: center; gap: 8px; }
+  .recog-banner .icon-tile { width: 34px; height: 34px; background: #FAEEDA; border: 1.5px solid #EF9F27; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+  .recog-banner .label { font-size: 9px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.07em; color: #B5D4F4; }
+  .recog-banner .title { font-size: 14px; font-weight: 500; color: #fff; }
+
+  .recog-subject { background: #F4F5F7; margin: 12px 14px; border-radius: 11px; padding: 10px 12px; display: flex; align-items: center; gap: 10px; }
+  .avatar { border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 500; flex-shrink: 0; }
+  .avatar-44 { width: 44px; height: 44px; font-size: 14px; }
+  .avatar-36 { width: 36px; height: 36px; font-size: 12px; }
+  .recog-subject .name { font-size: 14px; font-weight: 500; color: #2C2C2A; }
+  .recog-subject .role { font-size: 10px; color: #888780; }
+
+  .post-body { padding: 8px 14px 12px; font-size: 13px; font-weight: 400; line-height: 1.62; color: #2C2C2A; }
+
+  .social-proof { background: #F4F5F7; margin: 0 14px 10px; border-radius: 10px; padding: 9px 10px; display: flex; align-items: center; gap: 8px; }
+  .avatar-stack { display: flex; }
+  .avatar-stack .mini { width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid #fff; font-size: 7px; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 500; margin-left: -4px; }
+  .avatar-stack .mini:first-child { margin-left: 0; }
+  .social-proof .text { font-size: 11px; color: #5F5E5A; }
+  .social-proof .text strong { font-weight: 500; }
+
+  .engagement { padding: 6px 14px 8px; display: flex; align-items: center; gap: 6px; }
+  .reaction-cluster { display: flex; align-items: center; gap: 5px; }
+  .reaction-dot { width: 20px; height: 20px; border-radius: 50%; border: 2px solid #fff; display: flex; align-items: center; justify-content: center; font-size: 10px; margin-left: -4px; }
+  .reaction-dot:first-child { margin-left: 0; }
+  .engagement .count { font-size: 11px; font-weight: 500; color: #2C2C2A; }
+  .engagement .meta { font-size: 10px; color: #888780; margin-left: auto; }
+
+  .action-row { display: flex; border-top: 0.5px solid rgba(0,0,0,0.10); }
+  .action-btn { flex: 1; display: flex; align-items: center; justify-content: center; gap: 4px; padding: 10px 0; font-size: 10px; font-weight: 500; color: #5F5E5A; border-left: 0.5px solid rgba(0,0,0,0.10); }
+  .action-btn:first-child { border-left: none; }
+  .action-btn .icon { font-size: 14px; }
+
+  /* Poll Post */
+  .poll-banner { background: #3C3489; padding: 12px 14px; }
+  .poll-banner .label { font-size: 9px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.07em; color: #AFA9EC; }
+  .poll-header { padding: 12px 14px; display: flex; align-items: center; gap: 10px; }
+  .poll-header .name { font-size: 13px; font-weight: 500; color: #2C2C2A; }
+  .poll-header .role { font-size: 10px; color: #888780; }
+  .pill { font-size: 9px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; padding: 2px 7px; border-radius: 5px; display: inline-block; }
+  .pill-poll { background: #EEEDFE; color: #3C3489; }
+  .pill-recog { background: #FAEEDA; color: #633806; }
+  .pill-event { background: #FAECE7; color: #712B13; }
+  .pill-achieve { background: #E1F5EE; color: #085041; }
+
+  .poll-question { padding: 4px 14px 10px; font-size: 14px; font-weight: 500; color: #2C2C2A; line-height: 1.35; }
+  .poll-option { margin: 0 14px 6px; border: 0.5px solid rgba(0,0,0,0.10); border-radius: 10px; padding: 10px 12px; font-size: 12px; font-weight: 400; color: #2C2C2A; }
+  .poll-footer { padding: 8px 14px 10px; display: flex; gap: 12px; font-size: 10px; color: #888780; }
+
+  /* Achievement Post */
+  .achieve-banner { background: #085041; padding: 12px 14px; display: flex; align-items: center; gap: 8px; }
+  .achieve-banner .icon-tile { width: 34px; height: 34px; background: #E1F5EE; border: 1.5px solid #5DCAA5; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+  .achieve-banner .label { font-size: 9px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.07em; color: #9FE1CB; }
+  .achieve-banner .title { font-size: 14px; font-weight: 500; color: #fff; }
+
+  .metric-row { display: flex; gap: 6px; margin: 12px 14px; }
+  .metric-cell { flex: 1; background: #E1F5EE; border-radius: 10px; padding: 8px; text-align: center; }
+  .metric-cell .num { font-size: 18px; font-weight: 500; color: #085041; }
+  .metric-cell .lbl { font-size: 9px; color: #0F6E56; margin-top: 2px; }
+
+  /* Event Post */
+  .event-strip { background: #0C447C; height: 110px; position: relative; display: flex; align-items: flex-end; padding: 12px 14px; }
+  .event-strip .date-badge { position: absolute; top: 10px; left: 12px; background: #fff; border-radius: 8px; padding: 4px 8px; text-align: center; }
+  .event-strip .date-badge .month { font-size: 8px; font-weight: 500; color: #E24B4A; text-transform: uppercase; }
+  .event-strip .date-badge .day { font-size: 16px; font-weight: 500; color: #2C2C2A; }
+  .event-strip .event-title { font-size: 15px; font-weight: 500; color: #fff; }
+  .event-body { padding: 12px 14px; }
+  .event-meta { font-size: 11px; color: #5F5E5A; line-height: 1.5; margin-bottom: 10px; }
+  .rsvp-btn { width: 100%; background: #1D9E75; color: #fff; border: none; border-radius: 21px; padding: 11px; font-size: 13px; font-weight: 500; text-align: center; margin-bottom: 8px; }
+  .capacity-bar { height: 3px; background: #F4F5F7; border-radius: 2px; margin-top: 8px; }
+  .capacity-fill { height: 100%; background: #1D9E75; border-radius: 2px; width: 73%; }
+</style>
+</head>
+<body>
+
+<!-- Recognition Post -->
+<div class="card">
+  <div class="recog-banner">
+    <div class="icon-tile">&#127942;</div>
+    <div><div class="label">LEADER OF THE MONTH</div><div class="title">RECOGNIZED</div></div>
+  </div>
+  <div class="recog-subject">
+    <div class="avatar avatar-44" style="background:#1D9E75">PN</div>
+    <div>
+      <div class="name">Priya Nair</div>
+      <div class="role">Delivery Manager &middot; Payments</div>
+    </div>
+  </div>
+  <div class="post-body">Priya steered the Payments migration through three regions with zero downtime and kept the whole org calm under pressure. This is what principled leadership looks like.</div>
+  <div class="social-proof">
+    <div class="avatar-stack">
+      <div class="mini" style="background:#534AB7">SM</div>
+      <div class="mini" style="background:#1D9E75">AK</div>
+      <div class="mini" style="background:#BA7517">RJ</div>
+    </div>
+    <div class="text"><strong>Sohan</strong>, <strong>Anya</strong> and 71 others reacted</div>
+  </div>
+  <div class="engagement">
+    <div class="reaction-cluster">
+      <div class="reaction-dot" style="background:#FAEEDA">&#10024;</div>
+      <div class="reaction-dot" style="background:#E1F5EE">&#127942;</div>
+      <div class="reaction-dot" style="background:#FAECE7">&#128293;</div>
+    </div>
+    <span class="count">73</span>
+    <span class="meta">23 comments &middot; 5 reposts</span>
+  </div>
+  <div class="action-row">
+    <div class="action-btn"><span class="icon">&#9734;</span> React</div>
+    <div class="action-btn"><span class="icon">&#128172;</span> Comment</div>
+    <div class="action-btn"><span class="icon">&#128260;</span> Repost</div>
+    <div class="action-btn"><span class="icon">&#9993;</span> Share</div>
+  </div>
+</div>
+
+<!-- Poll Post -->
+<div class="card">
+  <div class="poll-header">
+    <div class="avatar avatar-36" style="background:#0C447C">KT</div>
+    <div style="flex:1">
+      <div style="display:flex;gap:6px;align-items:center"><span class="name">Kenji Tanaka</span> <span class="pill pill-poll">POLL</span></div>
+      <div class="role">Team Manager &middot; Mobile &middot; 4h</div>
+    </div>
+    <span style="font-size:16px;color:#888780">&#8943;</span>
+  </div>
+  <div class="poll-question">What should we prioritize for the Q3 manager enablement program?</div>
+  <div class="poll-option">Coaching & 1:1 frameworks</div>
+  <div class="poll-option">Hiring & interview calibration</div>
+  <div class="poll-option">Performance & feedback skills</div>
+  <div class="poll-option">Cross-team delivery rituals</div>
+  <div class="poll-footer">
+    <span>&#128101; 895 votes</span>
+    <span>&#9200; 2 days left</span>
+  </div>
+  <div class="action-row">
+    <div class="action-btn"><span class="icon">&#9734;</span> React</div>
+    <div class="action-btn"><span class="icon">&#128172;</span> Comment</div>
+    <div class="action-btn"><span class="icon">&#128260;</span> Repost</div>
+    <div class="action-btn"><span class="icon">&#9993;</span> Share</div>
+  </div>
+</div>
+
+<!-- Achievement Post -->
+<div class="card">
+  <div class="achieve-banner">
+    <div class="icon-tile">&#128640;</div>
+    <div><div class="label">ACHIEVEMENT</div><div class="title">Amara Okafor</div></div>
+  </div>
+  <div class="post-body">Platform team hit 99.99% uptime for two straight quarters. Proud beyond words.</div>
+  <div class="metric-row">
+    <div class="metric-cell"><div class="num">99.99%</div><div class="lbl">Uptime</div></div>
+    <div class="metric-cell"><div class="num">6</div><div class="lbl">Months</div></div>
+    <div class="metric-cell"><div class="num">&#9989;</div><div class="lbl">Verified</div></div>
+  </div>
+  <div class="action-row">
+    <div class="action-btn"><span class="icon">&#9734;</span> React</div>
+    <div class="action-btn"><span class="icon">&#128172;</span> Comment</div>
+    <div class="action-btn"><span class="icon">&#128260;</span> Repost</div>
+    <div class="action-btn"><span class="icon">&#9993;</span> Share</div>
+  </div>
+</div>
+
+<!-- Event Post -->
+<div class="card">
+  <div class="event-strip">
+    <div class="date-badge"><div class="month">JUL</div><div class="day">09</div></div>
+    <div class="event-title">LEADERSHIP SUMMIT</div>
+  </div>
+  <div class="event-body">
+    <div class="event-meta">Soha Reyes &middot; Senior Leader &middot; Data<br>184/250 going</div>
+    <div class="capacity-bar"><div class="capacity-fill"></div></div>
+    <div style="height:10px"></div>
+    <div class="rsvp-btn">RSVP &mdash; Save my spot</div>
+  </div>
+  <div class="action-row">
+    <div class="action-btn"><span class="icon">&#9734;</span> React</div>
+    <div class="action-btn"><span class="icon">&#128172;</span> Comment</div>
+    <div class="action-btn"><span class="icon">&#128260;</span> Repost</div>
+    <div class="action-btn"><span class="icon">&#9993;</span> Share</div>
+  </div>
+</div>
+
+</body>
+</html>

@@ -6,7 +6,18 @@ import 'package:manager_connect/features/admin/data/models/admin_dto.dart';
 import 'package:manager_connect/features/admin/presentation/providers/admin_provider.dart';
 import 'package:manager_connect/shared/widgets/error_state.dart';
 import 'package:manager_connect/shared/widgets/loading_state.dart';
+import 'package:manager_connect/shared/widgets/mc/mc_avatar.dart';
+import 'package:manager_connect/shared/widgets/mc/mc_colors.dart';
+import 'package:manager_connect/shared/widgets/mc/mc_inputs.dart';
+import 'package:manager_connect/shared/widgets/mc/mc_spacing.dart';
+import 'package:manager_connect/shared/widgets/mc/mc_typography.dart';
 import 'package:manager_connect/shared/widgets/toast.dart';
+
+String _initials(String name) {
+  final parts = name.trim().split(' ').where((p) => p.isNotEmpty).toList();
+  if (parts.length >= 2) return '${parts.first[0]}${parts.last[0]}'.toUpperCase();
+  return name.substring(0, name.length.clamp(0, 2)).toUpperCase();
+}
 
 class InvitationManagementScreen extends ConsumerStatefulWidget {
   const InvitationManagementScreen({super.key});
@@ -33,14 +44,63 @@ class _InvitationManagementScreenState
     final state = ref.watch(invitationManagementProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Invitations'),
+      backgroundColor: MCColors.background,
+      body: Column(
+        children: [
+          _buildHeader(),
+          Expanded(child: _buildBody(state)),
+        ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _showCreateInvitationDialog,
-        child: const Icon(Icons.person_add),
+      floatingActionButton: _buildFab(),
+    );
+  }
+
+  Widget _buildHeader() {
+    return Container(
+      color: MCColors.card,
+      padding: EdgeInsets.only(
+        top: MediaQuery.of(context).padding.top + 8,
+        bottom: 12,
+        left: 4,
+        right: MCSpacing.pageH,
       ),
-      body: _buildBody(state),
+      child: Row(
+        children: [
+          IconButton(
+            icon: const Icon(Icons.arrow_back, color: MCColors.textPrimary),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+          Expanded(child: Text('Invitations', style: MCTypography.h3)),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            decoration: BoxDecoration(
+              color: MCColors.infoBg,
+              borderRadius: BorderRadius.circular(MCSpacing.radiusPill),
+            ),
+            child: Text('Admin', style: MCTypography.caption.copyWith(color: MCColors.info)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFab() {
+    return GestureDetector(
+      onTap: _showCreateInvitationDialog,
+      child: Container(
+        width: 56,
+        height: 56,
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            colors: MCColors.primaryButtonGradient,
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: MCColors.primaryButtonShadow,
+        ),
+        child: const Icon(Icons.person_add_outlined, color: Colors.white),
+      ),
     );
   }
 
@@ -52,133 +112,137 @@ class _InvitationManagementScreenState
     if (state.error != null && state.invitations.isEmpty) {
       return ErrorState(
         message: 'Failed to load invitations',
-        onRetry: () =>
-            ref.read(invitationManagementProvider.notifier).load(),
+        onRetry: () => ref.read(invitationManagementProvider.notifier).load(),
       );
     }
 
     if (state.invitations.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              Icons.mail_outline,
-              size: 64,
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'No invitations yet',
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Tap + to invite someone',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
-            ),
-          ],
-        ),
-      );
+      return _buildEmptyState();
     }
 
     return RefreshIndicator(
-      onRefresh: () =>
-          ref.read(invitationManagementProvider.notifier).load(),
+      color: MCColors.primaryMid,
+      onRefresh: () => ref.read(invitationManagementProvider.notifier).load(),
       child: ListView.builder(
-        padding: const EdgeInsets.only(bottom: 80),
+        padding: const EdgeInsets.fromLTRB(
+          MCSpacing.pageH, MCSpacing.md, MCSpacing.pageH, 100),
         itemCount: state.invitations.length,
         itemBuilder: (context, index) =>
-            _buildInvitationTile(state.invitations[index]),
+            _buildInvitationCard(state.invitations[index]),
       ),
     );
   }
 
-  Widget _buildInvitationTile(InvitationDto invitation) {
-    final theme = Theme.of(context);
-    final contact = invitation.inviteeEmail ?? invitation.inviteePhone ?? '';
-
-    return ListTile(
-      leading: CircleAvatar(
-        backgroundColor: theme.colorScheme.secondaryContainer,
-        child: Icon(
-          Icons.mail_outline,
-          color: theme.colorScheme.onSecondaryContainer,
-        ),
-      ),
-      title: Text(invitation.inviteeName),
-      subtitle: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+  Widget _buildEmptyState() {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          if (contact.isNotEmpty)
-            Text(
-              contact,
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurfaceVariant,
-              ),
+          Container(
+            width: 72,
+            height: 72,
+            decoration: BoxDecoration(
+              color: MCColors.primaryPale,
+              borderRadius: BorderRadius.circular(MCSpacing.radiusMd),
             ),
-          const SizedBox(height: 2),
+            child: const Icon(Icons.mail_outline_rounded, size: 36, color: MCColors.primaryMid),
+          ),
+          const SizedBox(height: MCSpacing.md),
+          Text('No invitations yet', style: MCTypography.h4),
+          const SizedBox(height: 6),
           Text(
-            _dateFormat.format(invitation.createdAt),
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.outline,
-              fontSize: 11,
-            ),
+            'Tap + to invite someone to the community',
+            style: MCTypography.caption,
+            textAlign: TextAlign.center,
           ),
         ],
       ),
-      trailing: Row(
-        mainAxisSize: MainAxisSize.min,
+    );
+  }
+
+  Widget _buildInvitationCard(InvitationDto invitation) {
+    final contact = invitation.inviteeEmail ?? invitation.inviteePhone ?? '';
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: MCSpacing.cardGap),
+      padding: const EdgeInsets.all(MCSpacing.cardPadH),
+      decoration: BoxDecoration(
+        color: MCColors.card,
+        borderRadius: BorderRadius.circular(MCSpacing.radiusMd),
+        border: Border.all(color: MCColors.border),
+      ),
+      child: Row(
         children: [
-          _buildStatusChip(invitation.status, theme),
-          if (invitation.status == 'pending') ...[
-            const SizedBox(width: 4),
-            IconButton(
-              icon: Icon(Icons.cancel_outlined,
-                  size: 20, color: theme.colorScheme.error),
-              tooltip: 'Revoke',
-              onPressed: () => _confirmRevoke(invitation),
+          MCAvatar(
+            initials: _initials(invitation.inviteeName),
+            size: MCSpacing.avatarLg,
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(invitation.inviteeName, style: MCTypography.label),
+                if (contact.isNotEmpty) ...[
+                  const SizedBox(height: 2),
+                  Text(contact, style: MCTypography.caption),
+                ],
+                const SizedBox(height: 4),
+                Text(
+                  _dateFormat.format(invitation.createdAt),
+                  style: MCTypography.caption.copyWith(color: MCColors.textMuted, fontSize: 11),
+                ),
+              ],
             ),
-          ],
+          ),
+          const SizedBox(width: 8),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              _buildStatusChip(invitation.status),
+              if (invitation.status == 'pending') ...[
+                const SizedBox(height: 6),
+                GestureDetector(
+                  onTap: () => _confirmRevoke(invitation),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: MCColors.errorBg,
+                      borderRadius: BorderRadius.circular(MCSpacing.radiusPill),
+                    ),
+                    child: Text(
+                      'Revoke',
+                      style: MCTypography.caption.copyWith(
+                        color: MCColors.error, fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ],
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildStatusChip(String status, ThemeData theme) {
-    final Color backgroundColor;
-    final Color foregroundColor;
-
-    switch (status) {
-      case 'pending':
-        backgroundColor = theme.colorScheme.tertiaryContainer;
-        foregroundColor = theme.colorScheme.onTertiaryContainer;
-      case 'accepted':
-        backgroundColor = theme.colorScheme.primaryContainer;
-        foregroundColor = theme.colorScheme.onPrimaryContainer;
-      case 'expired':
-        backgroundColor = theme.colorScheme.surfaceContainerHighest;
-        foregroundColor = theme.colorScheme.onSurfaceVariant;
-      case 'revoked':
-        backgroundColor = theme.colorScheme.errorContainer;
-        foregroundColor = theme.colorScheme.onErrorContainer;
-      default:
-        backgroundColor = theme.colorScheme.surfaceContainerHighest;
-        foregroundColor = theme.colorScheme.onSurfaceVariant;
-    }
+  Widget _buildStatusChip(String status) {
+    final (Color bg, Color fg, String label) = switch (status) {
+      'pending'  => (MCColors.warningBg,  MCColors.warning,    'Pending'),
+      'accepted' => (MCColors.successBg,  MCColors.success,    'Accepted'),
+      'expired'  => (MCColors.borderLight, MCColors.textMuted,  'Expired'),
+      'revoked'  => (MCColors.errorBg,    MCColors.error,      'Revoked'),
+      _          => (MCColors.borderLight, MCColors.textMuted,  status),
+    };
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
-        color: backgroundColor,
-        borderRadius: BorderRadius.circular(12),
+        color: bg,
+        borderRadius: BorderRadius.circular(MCSpacing.radiusPill),
       ),
-      child: Text(
-        status,
-        style: theme.textTheme.labelSmall?.copyWith(color: foregroundColor),
-      ),
+      child: Text(label, style: MCTypography.caption.copyWith(color: fg, fontWeight: FontWeight.w600)),
     );
   }
 
@@ -186,22 +250,20 @@ class _InvitationManagementScreenState
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text('Revoke invitation?'),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(MCSpacing.radiusMd)),
+        title: Text('Revoke invitation?', style: MCTypography.h4),
         content: Text(
-          'Are you sure you want to revoke the invitation for '
-          '${invitation.inviteeName}?',
+          'This will revoke the invitation for ${invitation.inviteeName}.',
+          style: MCTypography.body,
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(dialogContext, false),
-            child: const Text('Cancel'),
+            child: Text('Cancel', style: MCTypography.label.copyWith(color: MCColors.textSecondary)),
           ),
-          FilledButton(
+          TextButton(
             onPressed: () => Navigator.pop(dialogContext, true),
-            style: FilledButton.styleFrom(
-              backgroundColor: Theme.of(context).colorScheme.error,
-            ),
-            child: const Text('Revoke'),
+            child: Text('Revoke', style: MCTypography.label.copyWith(color: MCColors.error)),
           ),
         ],
       ),
@@ -210,16 +272,10 @@ class _InvitationManagementScreenState
     if (confirmed != true || !mounted) return;
 
     try {
-      await ref
-          .read(invitationManagementProvider.notifier)
-          .revoke(invitation.id);
-      if (mounted) {
-        showSuccessToast(context, 'Invitation revoked');
-      }
+      await ref.read(invitationManagementProvider.notifier).revoke(invitation.id);
+      if (mounted) showSuccessToast(context, 'Invitation revoked');
     } catch (e) {
-      if (mounted) {
-        showErrorToast(context, 'Failed to revoke invitation');
-      }
+      if (mounted) showErrorToast(context, 'Failed to revoke invitation');
     }
   }
 
@@ -231,34 +287,26 @@ class _InvitationManagementScreenState
     showDialog<void>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text('Send Invitation'),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(MCSpacing.radiusMd)),
+        title: Text('Send Invitation', style: MCTypography.h4),
         content: Form(
           key: formKey,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              TextFormField(
+              MCInput(
                 controller: nameController,
-                decoration: const InputDecoration(
-                  labelText: 'Name',
-                  hintText: 'Invitee full name',
-                ),
-                textCapitalization: TextCapitalization.words,
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'Name is required';
-                  }
-                  return null;
-                },
+                label: 'Name',
+                hint: 'Invitee full name',
+                focusColor: MCColors.primaryMid,
               ),
-              const SizedBox(height: 12),
-              TextFormField(
+              const SizedBox(height: MCSpacing.md),
+              MCInput(
                 controller: emailController,
-                decoration: const InputDecoration(
-                  labelText: 'Email',
-                  hintText: 'invitee@example.com',
-                ),
+                label: 'Email',
+                hint: 'invitee@example.com',
                 keyboardType: TextInputType.emailAddress,
+                focusColor: MCColors.primaryMid,
               ),
             ],
           ),
@@ -266,11 +314,11 @@ class _InvitationManagementScreenState
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(dialogContext),
-            child: const Text('Cancel'),
+            child: Text('Cancel', style: MCTypography.label.copyWith(color: MCColors.textSecondary)),
           ),
-          FilledButton(
+          TextButton(
             onPressed: () async {
-              if (!formKey.currentState!.validate()) return;
+              if (nameController.text.trim().isEmpty) return;
               Navigator.pop(dialogContext);
               await _sendInvitation(
                 name: nameController.text.trim(),
@@ -279,17 +327,14 @@ class _InvitationManagementScreenState
                     : null,
               );
             },
-            child: const Text('Send'),
+            child: Text('Send', style: MCTypography.label.copyWith(color: MCColors.primaryMid)),
           ),
         ],
       ),
     );
   }
 
-  Future<void> _sendInvitation({
-    required String name,
-    String? email,
-  }) async {
+  Future<void> _sendInvitation({required String name, String? email}) async {
     try {
       final result = await ref
           .read(invitationManagementProvider.notifier)
@@ -304,9 +349,7 @@ class _InvitationManagementScreenState
         showSuccessToast(context, 'Invitation sent successfully');
       }
     } catch (e) {
-      if (mounted) {
-        showErrorToast(context, 'Failed to send invitation');
-      }
+      if (mounted) showErrorToast(context, 'Failed to send invitation');
     }
   }
 
@@ -314,27 +357,25 @@ class _InvitationManagementScreenState
     showDialog<void>(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text('Invitation Sent'),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(MCSpacing.radiusMd)),
+        title: Text('Invitation Sent', style: MCTypography.h4),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Share this link with the invitee:'),
-            const SizedBox(height: 12),
+            Text('Share this link with the invitee:', style: MCTypography.body),
+            const SizedBox(height: MCSpacing.sm),
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Theme.of(dialogContext)
-                    .colorScheme
-                    .surfaceContainerHighest,
-                borderRadius: BorderRadius.circular(8),
+                color: MCColors.background,
+                borderRadius: BorderRadius.circular(MCSpacing.radiusSm),
+                border: Border.all(color: MCColors.border),
               ),
               child: Text(
                 url,
-                style: Theme.of(dialogContext).textTheme.bodySmall?.copyWith(
-                      fontFamily: 'monospace',
-                    ),
+                style: MCTypography.caption.copyWith(fontFamily: 'monospace', fontSize: 11),
               ),
             ),
           ],
@@ -345,11 +386,11 @@ class _InvitationManagementScreenState
               Clipboard.setData(ClipboardData(text: url));
               showSuccessToast(context, 'Link copied to clipboard');
             },
-            child: const Text('Copy Link'),
+            child: Text('Copy Link', style: MCTypography.label.copyWith(color: MCColors.primaryMid)),
           ),
-          FilledButton(
+          TextButton(
             onPressed: () => Navigator.pop(dialogContext),
-            child: const Text('Done'),
+            child: Text('Done', style: MCTypography.label.copyWith(color: MCColors.textSecondary)),
           ),
         ],
       ),

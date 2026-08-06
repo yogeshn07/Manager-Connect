@@ -1,96 +1,111 @@
 import 'package:flutter/material.dart';
 import 'package:manager_connect/shared/widgets/mc/mc_colors.dart';
 import 'package:manager_connect/shared/widgets/mc/mc_spacing.dart';
+import 'package:manager_connect/shared/widgets/mc/mc_typography.dart';
 
-/// Bottom Navigation — icon-only, no labels, 4px active dot.
-/// Member: Home, Events, Challenges, Notifications, Profile.
-/// Border-top only. No shadow.
-class McBottomNav extends StatelessWidget {
-  const McBottomNav({
+/// Moonchild bottom navigation — 72px, white, 1px top border.
+/// Active pill: 48×28 lime (#C5FF55), dark text.
+/// Inactive: muted gray icon + label.
+class MCBottomNav extends StatelessWidget {
+  const MCBottomNav({
     required this.currentIndex,
     required this.onTap,
-    this.unreadNotifications = 0,
+    this.unreadAlerts = false,
     super.key,
   });
 
   final int currentIndex;
   final ValueChanged<int> onTap;
-  final int unreadNotifications;
+  final bool unreadAlerts;
 
-  static const _icons = [
-    Icons.home_outlined,
-    Icons.calendar_today_outlined,
-    Icons.emoji_events_outlined,
-    Icons.notifications_outlined,
-    Icons.person_outline,
-  ];
-
-  static const _activeIcons = [
-    Icons.home,
-    Icons.calendar_today,
-    Icons.emoji_events,
-    Icons.notifications,
-    Icons.person,
+  static const _items = [
+    (icon: Icons.home_outlined,          active: Icons.home,          label: 'Home'),
+    (icon: Icons.explore_outlined,       active: Icons.explore,       label: 'Explore'),
+    (icon: Icons.emoji_events_outlined,  active: Icons.emoji_events,  label: 'Challenges'),
+    (icon: Icons.assessment,             active: Icons.assessment,    label: 'Analytics'),
+    (icon: Icons.person_outline,         active: Icons.person,        label: 'Profile'),
+    (icon: Icons.electric_bolt_outlined, active: Icons.electric_bolt, label: 'Insights'),
   ];
 
   @override
   Widget build(BuildContext context) {
+    final bottomPad = MediaQuery.of(context).padding.bottom;
+
     return Container(
-      decoration: BoxDecoration(
-        color: McColors.bgCard,
-        border: Border(
-          top: BorderSide(color: McColors.borderDefault, width: McSpacing.borderThin),
-        ),
+      decoration: const BoxDecoration(
+        color: MCColors.card,
+        border: Border(top: BorderSide(color: MCColors.borderLight)),
       ),
       padding: EdgeInsets.only(
-        top: McSpacing.navPadTop,
-        bottom: McSpacing.navPadBottom + MediaQuery.of(context).padding.bottom,
+        top: 8,
+        bottom: bottomPad + 8,
+        left: 4,
+        right: 4,
       ),
       child: Row(
-        children: List.generate(5, (i) => _tab(i)),
+        children: List.generate(_items.length, _tab),
       ),
     );
   }
 
-  Widget _tab(int index) {
-    final active = index == currentIndex;
-    final icon = active ? _activeIcons[index] : _icons[index];
-    final color = active ? McColors.brand800 : McColors.textTertiary;
+  Widget _tab(int i) {
+    final active = i == currentIndex;
+    final item   = _items[i];
 
     return Expanded(
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
-        onTap: () => onTap(index),
+        onTap: () => onTap(i),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Stack(
               clipBehavior: Clip.none,
               children: [
-                Icon(icon, size: McSpacing.navIconSize, color: color),
-                if (index == 3 && unreadNotifications > 0)
-                  Positioned(
-                    top: -3,
-                    right: -6,
-                    child: Container(
+                AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  curve: Curves.easeOutCubic,
+                  width:  MCSpacing.navPillW,
+                  height: MCSpacing.navPillH,
+                  decoration: BoxDecoration(
+                    color: active ? MCColors.energyRed : Colors.transparent,
+                    borderRadius: BorderRadius.circular(MCSpacing.navPillRadius),
+                  ),
+                  child: Center(
+                    child: Icon(
+                      active ? item.active : item.icon,
+                      size: MCSpacing.navIconSize,
+                      color: active
+                          ? Colors.white
+                          : MCColors.textMuted,
+                    ),
+                  ),
+                ),
+                // Alert dot on Recognize tab (index 2)
+                if (i == 2 && unreadAlerts)
+                  const Positioned(
+                    top: 3,
+                    right: 6,
+                    child: SizedBox(
                       width: 7,
                       height: 7,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: McColors.red400,
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: MCColors.energyRed,
+                        ),
                       ),
                     ),
                   ),
               ],
             ),
-            const SizedBox(height: 4),
-            Container(
-              width: McSpacing.navDotSize,
-              height: McSpacing.navDotSize,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: active ? McColors.brand800 : Colors.transparent,
-              ),
+            const SizedBox(height: 2),
+            AnimatedDefaultTextStyle(
+              duration: const Duration(milliseconds: 200),
+              style: active
+                  ? MCTypography.navActive.copyWith(color: MCColors.energyRed)
+                  : MCTypography.navInactive,
+              child: Text(item.label, overflow: TextOverflow.ellipsis),
             ),
           ],
         ),

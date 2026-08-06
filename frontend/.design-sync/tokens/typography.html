@@ -1,0 +1,108 @@
+<!-- @dsCard group="Design Tokens" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Typography Scale</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: Inter, system-ui, sans-serif; background: #F4F5F7; padding: 16px; }
+  h1 { font-size: 18px; font-weight: 500; color: #2C2C2A; margin-bottom: 16px; }
+  .rule { background: #fff; border: 0.5px solid rgba(0,0,0,0.10); border-radius: 13px; padding: 14px; margin-bottom: 8px; }
+  .rule-label { font-size: 10px; font-weight: 500; color: #5F5E5A; text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 4px; }
+  .rule-meta { font-size: 10px; color: #888780; margin-top: 4px; }
+  .note { background: #fff; border: 0.5px solid rgba(0,0,0,0.10); border-radius: 13px; padding: 14px; margin-top: 16px; }
+  .note h3 { font-size: 13px; font-weight: 500; color: #2C2C2A; margin-bottom: 8px; }
+  .note p { font-size: 12px; color: #5F5E5A; line-height: 1.6; margin-bottom: 4px; }
+</style>
+</head>
+<body>
+<h1>Typography Scale</h1>
+
+<div class="rule">
+  <div class="rule-label">Display</div>
+  <div style="font-size:22px; font-weight:500; line-height:1.3; color:#2C2C2A">Screen-level title (Analytics hero, Review hero)</div>
+  <div class="rule-meta">22px / weight 500 / line-height 1.3</div>
+</div>
+
+<div class="rule">
+  <div class="rule-label">H1</div>
+  <div style="font-size:19px; font-weight:500; line-height:1.27; color:#2C2C2A">Module hero titles, onboarding headings</div>
+  <div class="rule-meta">18-20px / weight 500 / line-height 1.25-1.3</div>
+</div>
+
+<div class="rule">
+  <div class="rule-label">H2</div>
+  <div style="font-size:16px; font-weight:500; line-height:1.3; color:#2C2C2A">Feed hero greeting, streak hero</div>
+  <div class="rule-meta">16-17px / weight 500 / line-height 1.3</div>
+</div>
+
+<div class="rule">
+  <div class="rule-label">H3</div>
+  <div style="font-size:14px; font-weight:500; line-height:1.32; color:#2C2C2A">Card section titles, post titles</div>
+  <div class="rule-meta">14-15px / weight 500 / line-height 1.3-1.35</div>
+</div>
+
+<div class="rule">
+  <div class="rule-label">H4</div>
+  <div style="font-size:13px; font-weight:500; line-height:1.35; color:#2C2C2A">Card names, content titles</div>
+  <div class="rule-meta">13-14px / weight 500 / line-height 1.35</div>
+</div>
+
+<div class="rule">
+  <div class="rule-label">Body Large</div>
+  <div style="font-size:13px; font-weight:400; line-height:1.62; color:#2C2C2A">Post body text, comment text, quote blocks. This is the primary reading size for longer content.</div>
+  <div class="rule-meta">13px / weight 400 / line-height 1.6-1.65</div>
+</div>
+
+<div class="rule">
+  <div class="rule-label">Body</div>
+  <div style="font-size:12px; font-weight:400; line-height:1.57; color:#2C2C2A">Standard card body, notification sub-text</div>
+  <div class="rule-meta">12px / weight 400 / line-height 1.55-1.6</div>
+</div>
+
+<div class="rule">
+  <div class="rule-label">Body Small</div>
+  <div style="font-size:11px; font-weight:400; line-height:1.47; color:#5F5E5A">Secondary card content, event metadata</div>
+  <div class="rule-meta">11px / weight 400 / line-height 1.45-1.5</div>
+</div>
+
+<div class="rule">
+  <div class="rule-label">Caption</div>
+  <div style="font-size:10px; font-weight:400; line-height:1.4; color:#888780">Timestamps, role labels, metadata rows</div>
+  <div class="rule-meta">10-11px / weight 400 / line-height 1.4</div>
+</div>
+
+<div class="rule">
+  <div class="rule-label">Label</div>
+  <div style="font-size:9px; font-weight:500; line-height:1.3; color:#5F5E5A; text-transform:uppercase; letter-spacing:0.07em">SECTION HEADERS, CARD SUB-LABELS</div>
+  <div class="rule-meta">9-10px / weight 500 / uppercase / letter-spacing 0.06-0.09em</div>
+</div>
+
+<div class="rule">
+  <div class="rule-label">Pill</div>
+  <div style="display:inline-flex; gap:6px; align-items:center">
+    <span style="font-size:9px; font-weight:500; text-transform:uppercase; letter-spacing:0.06em; background:#E6F1FB; color:#0C447C; padding:2px 7px; border-radius:5px">POLL</span>
+    <span style="font-size:9px; font-weight:500; text-transform:uppercase; letter-spacing:0.06em; background:#FAEEDA; color:#633806; padding:2px 7px; border-radius:5px">RECOGNITION</span>
+    <span style="font-size:9px; font-weight:500; text-transform:uppercase; letter-spacing:0.06em; background:#E1F5EE; color:#085041; padding:2px 7px; border-radius:5px">ACHIEVEMENT</span>
+    <span style="font-size:9px; font-weight:500; text-transform:uppercase; letter-spacing:0.06em; background:#FAECE7; color:#712B13; padding:2px 7px; border-radius:5px">EVENT</span>
+  </div>
+  <div class="rule-meta">8-9px / weight 500 / uppercase</div>
+</div>
+
+<div class="rule">
+  <div class="rule-label">KPI Numbers</div>
+  <div style="font-size:24px; font-weight:500; line-height:1; color:#2C2C2A">1,247</div>
+  <div class="rule-meta">17-28px / weight 500 / line-height 1.0</div>
+</div>
+
+<div class="note">
+  <h3>Rules</h3>
+  <p>Only two weights: 400 (regular) and 500 (medium). Never use 600/700/bold.</p>
+  <p>Font: Inter / system-ui sans-serif for all UI. Serif reserved ONLY for recognition quote blocks and wellness reflections.</p>
+  <p>Uppercase ONLY for: section header labels, pill text, module eyebrow labels. Never body content.</p>
+  <p>Minimum: 9px for pills, 10px for body-facing text, 11px for readable text.</p>
+</div>
+</body>
+</html>

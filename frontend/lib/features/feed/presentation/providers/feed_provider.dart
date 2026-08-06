@@ -134,12 +134,40 @@ class FeedNotifier extends _$FeedNotifier {
           schema: 'public',
           table: Table.posts,
           callback: (payload) {
-            final newRecord = payload.newRecord;
-            final postId = newRecord['id'] as String?;
+            final postId = payload.newRecord['id'] as String?;
             if (postId == null) return;
             if (_knownPostIds.contains(postId)) return;
             _knownPostIds.add(postId);
             _fetchAndPrependPost(postId);
+          },
+        )
+        .onPostgresChanges(
+          event: PostgresChangeEvent.update,
+          schema: 'public',
+          table: Table.posts,
+          callback: (payload) {
+            final postId = payload.newRecord['id'] as String?;
+            if (postId == null) return;
+            final isDeleted = payload.newRecord['is_deleted'] as bool? ?? false;
+            if (isDeleted) {
+              removePost(postId);
+            } else {
+              _refreshPost(postId);
+            }
+          },
+        )
+        .onPostgresChanges(
+          event: PostgresChangeEvent.insert,
+          schema: 'public',
+          table: Table.pollVotes,
+          callback: (payload) {
+            final pollId = payload.newRecord['poll_id'] as String?;
+            if (pollId == null) return;
+            // Find the feed post that owns this poll and refresh just that post
+            final post = state.posts
+                .where((p) => p.poll?.id == pollId)
+                .firstOrNull;
+            if (post != null) _refreshPost(post.id);
           },
         )
         .subscribe();
@@ -150,6 +178,19 @@ class FeedNotifier extends _$FeedNotifier {
       final post = await _repo!.getPost(postId);
       if (post.isDeleted) return;
       state = state.copyWith(posts: [post, ...state.posts]);
+    } catch (_) {}
+  }
+
+  Future<void> _refreshPost(String postId) async {
+    try {
+      final fresh = await _repo!.getPost(postId);
+      if (fresh.isDeleted) {
+        removePost(postId);
+        return;
+      }
+      state = state.copyWith(
+        posts: state.posts.map((p) => p.id == postId ? fresh : p).toList(),
+      );
     } catch (_) {}
   }
 

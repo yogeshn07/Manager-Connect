@@ -59,7 +59,7 @@ final class PollDetailNotifierProvider
 }
 
 String _$pollDetailNotifierHash() =>
-    r'ec8e50ed9ebe7edc16ea94daa66148d0d54c72c5';
+    r'09a1a747af485170bb872811066664ab6812bb7c';
 
 final class PollDetailNotifierFamily extends $Family
     with

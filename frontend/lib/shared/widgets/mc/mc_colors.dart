@@ -1,92 +1,105 @@
 import 'package:flutter/material.dart';
 
-/// Design tokens from design-system.md — exact hex values.
-/// No substitutions. No interpretation.
-abstract final class McColors {
-  // Brand Primary Ramp
-  static const Color brand900 = Color(0xFF042C53);
-  static const Color brand800 = Color(0xFF0C447C);
-  static const Color brand700 = Color(0xFF185FA5);
-  static const Color brand400 = Color(0xFF378ADD);
-  static const Color brand200 = Color(0xFF85B7EB);
-  static const Color brand100 = Color(0xFFB5D4F4);
-  static const Color brand50 = Color(0xFFE6F1FB);
-  static const Color brandWhisper = Color(0xFFF5F9FF);
+abstract final class MCColors {
+  // ── Brand Blue ramp ──────────────────────────────────────────────────────
+  static const Color primary     = Color(0xFF1A3A6B);
+  static const Color primaryMid  = Color(0xFF2451A3);
+  static const Color primaryLight= Color(0xFF3B6FD4);
+  static const Color primaryPale = Color(0xFFEEF2FA);
 
-  // Teal (Success / Wellness / Confirmed)
-  static const Color teal50 = Color(0xFFE1F5EE);
-  static const Color teal100 = Color(0xFF9FE1CB);
-  static const Color teal400 = Color(0xFF1D9E75);
-  static const Color teal600 = Color(0xFF0F6E56);
-  static const Color teal800 = Color(0xFF085041);
-  static const Color tealBorder = Color(0xFF5DCAA5);
+  // ── Amber ─────────────────────────────────────────────────────────────────
+  static const Color amber      = Color(0xFFFFB840);
+  static const Color amberDark  = Color(0xFFD97706);
+  static const Color amberLight = Color(0xFFFEF3C7);
+  static const Color amberPale  = Color(0xFFFFFBEB);
 
-  // Amber (Recognition / Gold / Achievements)
-  static const Color amber50 = Color(0xFFFAEEDA);
-  static const Color amber100 = Color(0xFFFAC775);
-  static const Color amber400 = Color(0xFFBA7517);
-  static const Color amber600 = Color(0xFF854F0B);
-  static const Color amber800 = Color(0xFF633806);
-  static const Color amberBorder = Color(0xFFEF9F27);
+  // ── Energy Red (signal / LIVE / notification indicator) ─────────────────
+  static const Color energyRed       = Color(0xFFCC1C22); // deeper than error — identity signal
+  static const Color energyRedSubtle = Color(0x1ACC1C22); // 10% tint for pulse backgrounds
 
-  // Coral (Sports / Events / Urgency)
-  static const Color coral50 = Color(0xFFFAECE7);
-  static const Color coral400 = Color(0xFFD85A30);
-  static const Color coral600 = Color(0xFF993C1D);
-  static const Color coral800 = Color(0xFF712B13);
+  // ── Lime (Active nav indicator) ───────────────────────────────────────────
+  static const Color navLime      = Color(0xFFC5FF55);
+  static const Color navLimeStrong = Color(0xFFB0E64D);
 
-  // Purple (Mindset / Mentions / Wellness Hub)
-  static const Color purple50 = Color(0xFFEEEDFE);
-  static const Color purple200 = Color(0xFFAFA9EC);
-  static const Color purple400 = Color(0xFF7F77DD);
-  static const Color purple600 = Color(0xFF534AB7);
-  static const Color purple800 = Color(0xFF3C3489);
-  static const Color purple900 = Color(0xFF26215C);
+  // ── Violet (Polls / AI Assist) ────────────────────────────────────────────
+  static const Color violet      = Color(0xFF7C3AED);
+  static const Color violetLight = Color(0xFFEDE9FE);
 
-  // Red (Urgent / Unread / Error)
-  static const Color red50 = Color(0xFFFCEBEB);
-  static const Color red100 = Color(0xFFF7C1C1);
-  static const Color red200 = Color(0xFFF09595);
-  static const Color red400 = Color(0xFFE24B4A);
-  static const Color red600 = Color(0xFFA32D2D);
-  static const Color red800 = Color(0xFF791F1F);
+  // ── Semantic ──────────────────────────────────────────────────────────────
+  static const Color success    = Color(0xFF10B981);
+  static const Color successBg  = Color(0xFFD1FAE5);
+  static const Color error      = Color(0xFFEF4444);
+  static const Color errorBg    = Color(0xFFFEF2F2);
+  static const Color warning    = Color(0xFFD97706);
+  static const Color warningBg  = Color(0xFFFEF3C7);
+  static const Color info       = Color(0xFF3B82F6);
+  static const Color infoBg     = Color(0xFFDBEAFE);
 
-  // Gray (Neutral / Structural)
-  static const Color gray50 = Color(0xFFF1EFE8);
-  static const Color gray100 = Color(0xFFD3D1C7);
-  static const Color gray200 = Color(0xFFB4B2A9);
-  static const Color gray400 = Color(0xFF888780);
-  static const Color gray600 = Color(0xFF5F5E5A);
-  static const Color gray800 = Color(0xFF444441);
-  static const Color gray900 = Color(0xFF2C2C2A);
+  // ── Surface ───────────────────────────────────────────────────────────────
+  static const Color background = Color(0xFFF4F5F7);
+  static const Color card       = Color(0xFFFFFFFF);
+  static const Color inputBg    = Color(0xFFF8FAFC);
 
-  // Green (Achievement / Unlocked)
-  static const Color green50 = Color(0xFFEAF3DE);
-  static const Color green400 = Color(0xFF639922);
-  static const Color green600 = Color(0xFF3B6D11);
+  // ── Text ──────────────────────────────────────────────────────────────────
+  static const Color textPrimary   = Color(0xFF111827);
+  static const Color textSecondary = Color(0xFF6B7280);
+  static const Color textMuted     = Color(0xFF9CA3AF);
 
-  // Backgrounds
-  static const Color bgApp = Color(0xFFF4F5F7);
-  static const Color bgCard = Color(0xFFFFFFFF);
-  static const Color bgInput = Color(0xFFF4F5F7);
-  static const Color bgHeroPrimary = Color(0xFF0C447C);
-  static const Color bgHeroWellness = Color(0xFF085041);
-  static const Color bgHeroChallenge = Color(0xFF1D9E75);
-  static const Color bgHeroAdminMod = Color(0xFFA32D2D);
+  // ── Border ────────────────────────────────────────────────────────────────
+  static const Color border      = Color(0xFFE5E7EB);
+  static const Color borderLight = Color(0xFFF3F4F6);
 
-  // Borders — 0.5px solid at 10% black opacity
-  static Color get borderDefault => Colors.black.withValues(alpha: 0.10);
-  static Color get borderHover => Colors.black.withValues(alpha: 0.20);
-  static const Color borderUnread = Color(0xFFB5D4F4);
-  static const Color borderCelebrate = Color(0xFFEF9F27);
-  static const Color borderStripe = Color(0xFF0C447C);
+  // ── Gradients ─────────────────────────────────────────────────────────────
+  static const List<Color> splashGradient = [Color(0xFF1A3A6B), Color(0xFF0F2D5E)];
 
-  // Text
-  static const Color textPrimary = Color(0xFF2C2C2A);
-  static const Color textSecondary = Color(0xFF5F5E5A);
-  static const Color textTertiary = Color(0xFF888780);
-  static const Color textLink = Color(0xFF185FA5);
+  static const List<Color> primaryButtonGradient = [
+    Color(0xFF1E4585),
+    Color(0xFF1A3A6B),
+    Color(0xFF0F2D5E),
+  ];
 
-  // Celebration card bg
-  static const Color bgCelebration = Color(0xFFFFFBF4);
+  static const List<Color> amberButtonGradient = [
+    Color(0xFFF59E0B),
+    Color(0xFFFBBF24),
+  ];
+
+  static const List<Color> rsvpButtonGradient = [
+    Color(0xFF3B6FD4),
+    Color(0xFF60A5FA),
+  ];
+
+  // ── Story ring ────────────────────────────────────────────────────────────
+  static const Color storyRingActive  = Color(0xFF3B6FD4);
+  static const Color storyRingActive2 = Color(0xFF60A5FA);
+  static const Color storyRingViewed  = Color(0xFFD1D5DB);
+
+  // ── Shadows ───────────────────────────────────────────────────────────────
+  static List<BoxShadow> get cardShadow => [
+        const BoxShadow(
+          color: Color(0x0F000000),
+          blurRadius: 3,
+          offset: Offset(0, 1),
+        ),
+        const BoxShadow(
+          color: Color(0x0A000000),
+          blurRadius: 2,
+          offset: Offset(0, 1),
+        ),
+      ];
+
+  static List<BoxShadow> get primaryButtonShadow => [
+        BoxShadow(
+          color: const Color(0xFF0F2D5E).withValues(alpha: 0.30),
+          blurRadius: 16,
+          offset: const Offset(0, 4),
+        ),
+      ];
+
+  static List<BoxShadow> get amberButtonShadow => [
+        BoxShadow(
+          color: const Color(0xFFFFB840).withValues(alpha: 0.35),
+          blurRadius: 16,
+          offset: const Offset(0, 4),
+        ),
+      ];
 }

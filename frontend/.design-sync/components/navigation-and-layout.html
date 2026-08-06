@@ -1,0 +1,163 @@
+<!-- @dsCard group="Components" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Navigation & Layout Components</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: Inter, system-ui, sans-serif; background: #F4F5F7; padding: 12px; max-width: 390px; }
+  h2 { font-size: 11px; font-weight: 500; color: #5F5E5A; text-transform: uppercase; letter-spacing: 0.07em; margin: 16px 0 8px; }
+
+  /* Bottom Nav */
+  .bottom-nav { background: #fff; border-top: 0.5px solid rgba(0,0,0,0.10); display: flex; padding: 8px 0 14px; margin-bottom: 16px; border-radius: 0 0 14px 14px; }
+  .nav-tab { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 10px; color: #888780; }
+  .nav-tab.active { color: #0C447C; }
+  .nav-tab .icon { font-size: 21px; }
+  .nav-dot { width: 4px; height: 4px; border-radius: 50%; background: #0C447C; }
+
+  /* Top Bar Type A */
+  .top-bar { background: #fff; border-bottom: 0.5px solid rgba(0,0,0,0.10); padding: 13px 14px 11px; display: flex; align-items: center; gap: 10px; margin-bottom: 8px; border-radius: 14px 14px 0 0; }
+  .logo-gem { width: 33px; height: 33px; background: #0C447C; border-radius: 9px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 16px; font-weight: 500; }
+  .top-bar .title { font-size: 15px; font-weight: 500; color: #2C2C2A; }
+  .top-bar .subtitle { font-size: 10px; color: #888780; }
+  .top-bar .right { margin-left: auto; display: flex; gap: 14px; font-size: 20px; color: #5F5E5A; }
+
+  /* Top Bar Type B */
+  .top-bar-back { background: #fff; border-bottom: 0.5px solid rgba(0,0,0,0.10); padding: 13px 14px 11px; display: flex; align-items: center; margin-bottom: 8px; border-radius: 14px 14px 0 0; }
+  .back-link { font-size: 13px; font-weight: 500; color: #185FA5; display: flex; align-items: center; gap: 4px; }
+  .back-link .arrow { font-size: 17px; }
+  .top-bar-back .center-title { flex: 1; text-align: center; font-size: 14px; font-weight: 500; color: #2C2C2A; }
+
+  /* Story Ring */
+  .stories { display: flex; gap: 12px; padding: 12px 14px; background: #fff; border: 0.5px solid rgba(0,0,0,0.10); border-radius: 14px; margin-bottom: 8px; overflow-x: auto; }
+  .story { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .story-ring { width: 52px; height: 52px; border-radius: 50%; padding: 2.5px; display: flex; align-items: center; justify-content: center; }
+  .story-ring.none { background: #D3D1C7; }
+  .story-ring.new { background: #0C447C; }
+  .story-ring.live { background: #A32D2D; }
+  .story-inner { width: 100%; height: 100%; border-radius: 50%; border: 2.5px solid #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 500; color: #fff; }
+  .story .name { font-size: 10px; color: #5F5E5A; max-width: 52px; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .live-pill { font-size: 9px; font-weight: 500; text-transform: uppercase; color: #fff; background: #E24B4A; padding: 1px 5px; border-radius: 4px; border: 1.5px solid #F4F5F7; margin-top: -8px; position: relative; z-index: 1; }
+
+  /* Composer */
+  .composer { background: #fff; border: 0.5px solid rgba(0,0,0,0.10); border-radius: 14px; padding: 12px 14px; margin-bottom: 8px; }
+  .composer-top { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .composer-input { flex: 1; background: #F4F5F7; border-radius: 22px; padding: 9px 14px; font-size: 12px; color: #888780; }
+  .composer-actions { display: flex; gap: 10px; border-top: 0.5px solid rgba(0,0,0,0.10); padding-top: 10px; }
+  .composer-action { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .composer-action .tile { width: 32px; height: 32px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+  .composer-action .label { font-size: 9px; font-weight: 500; }
+
+  /* Section Header */
+  .section-header { display: flex; align-items: center; padding: 12px 14px 6px; }
+  .section-header .left { display: flex; align-items: center; gap: 5px; }
+  .section-header .left .icon { font-size: 12px; }
+  .section-header .left .text { font-size: 11px; font-weight: 500; color: #5F5E5A; text-transform: uppercase; letter-spacing: 0.07em; }
+  .section-header .right { margin-left: auto; font-size: 11px; font-weight: 500; color: #185FA5; }
+
+  /* Filter Chips */
+  .chip-strip { display: flex; gap: 7px; padding: 10px 14px; background: #fff; border: 0.5px solid rgba(0,0,0,0.10); border-radius: 14px; overflow-x: auto; margin-bottom: 8px; }
+  .chip { padding: 5px 11px; border-radius: 16px; font-size: 11px; font-weight: 500; white-space: nowrap; }
+  .chip.active { background: #0C447C; color: #fff; }
+  .chip.default { background: #fff; border: 0.5px solid rgba(0,0,0,0.15); color: #5F5E5A; }
+</style>
+</head>
+<body>
+
+<h2>Top Bar — Type A (Logo + Title)</h2>
+<div class="top-bar">
+  <div class="logo-gem">M</div>
+  <div><div class="title">Manager Connect</div><div class="subtitle">Leadership community</div></div>
+  <div class="right">&#128269; &#128276;</div>
+</div>
+
+<h2>Top Bar — Type B (Back + Title)</h2>
+<div class="top-bar-back">
+  <div class="back-link"><span class="arrow">&larr;</span> Events</div>
+  <div class="center-title">Leadership Summit</div>
+</div>
+
+<h2>Story Rings</h2>
+<div class="stories">
+  <div class="story">
+    <div class="story-ring none"><div class="story-inner" style="background:#888780">+</div></div>
+    <div class="name">You</div>
+  </div>
+  <div class="story">
+    <div class="story-ring new"><div class="story-inner" style="background:#1D9E75">PN</div></div>
+    <div class="live-pill">LIVE</div>
+    <div class="name">Priya</div>
+  </div>
+  <div class="story">
+    <div class="story-ring new"><div class="story-inner" style="background:#0C447C">MT</div></div>
+    <div class="name">Marcus</div>
+  </div>
+  <div class="story">
+    <div class="story-ring none"><div class="story-inner" style="background:#534AB7">SR</div></div>
+    <div class="name">Sofia</div>
+  </div>
+  <div class="story">
+    <div class="story-ring new"><div class="story-inner" style="background:#BA7517">KT</div></div>
+    <div class="live-pill">LIVE</div>
+    <div class="name">Kenji</div>
+  </div>
+  <div class="story">
+    <div class="story-ring none"><div class="story-inner" style="background:#712B13">DW</div></div>
+    <div class="name">David</div>
+  </div>
+</div>
+
+<h2>Composer</h2>
+<div class="composer">
+  <div class="composer-top">
+    <div class="avatar avatar-36" style="width:36px;height:36px;border-radius:50%;background:#888780;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:500">YN</div>
+    <div class="composer-input">Share something with your leaders...</div>
+  </div>
+  <div class="composer-actions">
+    <div class="composer-action">
+      <div class="tile" style="background:#E6F1FB">&#128227;</div>
+      <div class="label" style="color:#185FA5">Share Update</div>
+    </div>
+    <div class="composer-action">
+      <div class="tile" style="background:#FAEEDA">&#127942;</div>
+      <div class="label" style="color:#854F0B">Recognition</div>
+    </div>
+    <div class="composer-action">
+      <div class="tile" style="background:#EEEDFE">&#128202;</div>
+      <div class="label" style="color:#3C3489">Poll</div>
+    </div>
+    <div class="composer-action">
+      <div class="tile" style="background:#FAECE7">&#128197;</div>
+      <div class="label" style="color:#993C1D">Event</div>
+    </div>
+  </div>
+</div>
+
+<h2>Section Header</h2>
+<div class="section-header">
+  <div class="left"><span class="icon" style="color:#BA7517">&#128293;</span><span class="text">Trending in your org</span></div>
+  <div class="right">Recent</div>
+</div>
+
+<h2>Filter / Category Chips</h2>
+<div class="chip-strip">
+  <div class="chip active">All</div>
+  <div class="chip default">Recognition</div>
+  <div class="chip default">Polls</div>
+  <div class="chip default">Events</div>
+  <div class="chip default">Achievements</div>
+</div>
+
+<h2>Bottom Navigation — Member</h2>
+<div class="bottom-nav">
+  <div class="nav-tab active"><span class="icon">&#127968;</span><div class="nav-dot"></div>Home</div>
+  <div class="nav-tab"><span class="icon">&#128269;</span>Explore</div>
+  <div class="nav-tab"><span class="icon">&#127942;</span>Challenges</div>
+  <div class="nav-tab"><span class="icon">&#128197;</span>Events</div>
+  <div class="nav-tab"><span class="icon">&#128100;</span>Profile</div>
+</div>
+
+</body>
+</html>

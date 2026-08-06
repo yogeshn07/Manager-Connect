@@ -1,66 +1,54 @@
-/// Spacing tokens from design-system.md — 4px base unit.
-abstract final class McSpacing {
-  static const double space1 = 4;
-  static const double space2 = 8;
-  static const double space3 = 12;
-  static const double space4 = 16;
-  static const double space5 = 20;
-  static const double space6 = 24;
-  static const double space7 = 32;
+abstract final class MCSpacing {
+  // ── Base scale ────────────────────────────────────────────────────────────
+  static const double xs2  =  4;
+  static const double xs   =  8;
+  static const double sm   = 12;
+  static const double md   = 16;
+  static const double lg   = 20;
+  static const double xl   = 24;
+  static const double xl2  = 28;
+  static const double xl3  = 32;
+  static const double xl4  = 48;
 
-  // Card padding
-  static const double cardPadH = 14;
-  static const double cardPadV = 12;
-  static const double heroPadH = 16;
-  static const double heroPadV = 18;
+  // ── Layout ────────────────────────────────────────────────────────────────
+  static const double pageH     = 16;  // horizontal page padding
+  static const double cardGap   = 12;  // gap between cards in a list
+  static const double cardPadH  = 16;  // card horizontal padding
+  static const double cardPadV  = 16;  // card vertical padding
 
-  // Page margins
-  static const double pageMargin = 14;
+  // ── Corner radius ─────────────────────────────────────────────────────────
+  static const double radiusXs      =  8;
+  static const double radiusSm      = 12;
+  static const double radiusMd      = 16;  // feed cards
+  static const double radiusLg      = 20;  // creation / modal cards
+  static const double radiusXl      = 28;  // login bottom sheet
+  static const double radiusPill    = 999;
+  static const double radiusInput   = 12;
+  static const double radiusButton  = 14;  // primary CTA
+  static const double radiusTopBar  = 0;
+  static const double radiusOtpBox  = 12;
 
-  // List spacing
-  static const double cardGap = 9;
-  static const double sectionGap = 12;
+  // ── Borders ───────────────────────────────────────────────────────────────
+  static const double borderThin    = 1;
+  static const double borderMed     = 1.5;
+  static const double borderAccent  = 4;   // announcement left stripe
+  static const double borderRecog   = 6;   // recognition top shimmer strip
 
-  // Border widths
-  static const double borderThin = 0.5;
-  static const double borderAccent = 1.0;
-  static const double borderStripe = 3.0;
+  // ── Avatar sizes ──────────────────────────────────────────────────────────
+  static const double avatarXs  = 24;
+  static const double avatarSm  = 32;
+  static const double avatarMd  = 40;
+  static const double avatarLg  = 44;
+  static const double avatarXl  = 56;  // stories row
+  static const double avatar2xl = 64;
 
-  // Corner radius
-  static const double radiusCard = 14;
-  static const double radiusCardFeatured = 16;
-  static const double radiusCardSmall = 12;
-  static const double radiusPillButton = 22;
-  static const double radiusIconTileLg = 10;
-  static const double radiusIconTileMd = 8;
-  static const double radiusIconTileSm = 7;
-  static const double radiusChip = 16;
-  static const double radiusInput = 20;
-  static const double radiusBadge = 6;
-  static const double radiusDayPip = 6;
-  static const double radiusSheet = 20;
+  // ── Navigation ────────────────────────────────────────────────────────────
+  static const double navHeight     = 72;
+  static const double navIconSize   = 22;
+  static const double navPillW      = 48;
+  static const double navPillH      = 28;
+  static const double navPillRadius = 9999;
 
-  // Avatar sizes
-  static const double avatarXs = 16;
-  static const double avatarSm = 20;
-  static const double avatarMd = 24;
-  static const double avatarLg = 30;
-  static const double avatarXl = 34;
-  static const double avatar2xl = 38;
-  static const double avatar3xl = 44;
-  static const double avatar4xl = 52;
-  static const double avatar5xl = 64;
-
-  // Icon tile sizes
-  static const double iconTileSm = 24;
-  static const double iconTileMd = 30;
-  static const double iconTileLg = 36;
-  static const double iconTileXl = 42;
-  static const double iconTile2xl = 54;
-
-  // Bottom nav
-  static const double navIconSize = 21;
-  static const double navDotSize = 4;
-  static const double navPadTop = 8;
-  static const double navPadBottom = 14;
+  // ── Top bar ───────────────────────────────────────────────────────────────
+  static const double topBarHeight = 58;
 }

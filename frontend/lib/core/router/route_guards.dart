@@ -23,7 +23,8 @@ String? guardRedirect({
               ? null
               : RouteNames.createProfile;
         }
-        if (isSplash || isAuthRoute) return RouteNames.feed;
+        if (location == RouteNames.gate) return null;
+        if (isSplash || isAuthRoute) return RouteNames.gate;
         if (isAdminRoute && session.role != AppRole.admin) {
           return RouteNames.feed;
         }
